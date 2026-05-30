@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Before Times — A Digital Archive of Analog Life</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&family=Fragment+Mono:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f6f1eb;
+  --paper: #f0e8dd;
+  --paper-dark: #e5dacd;
+  --text: #1a1817;
+  --text-muted: #7a7068;
+  --text-faint: #b0a69c;
+  --accent: #9a6f54;
+  --accent-light: #c4957a;
+  --sage: #7d8a6e;
+  --border: #d6cbbf;
+  --shadow: rgba(26, 24, 23, 0.06);
+  --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'Fragment Mono', 'SF Mono', Monaco, monospace;
+}
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: var(--accent);
+  color: white;
+}
+
+/* grain overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+/* navigation */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 1.25rem 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(180deg, rgba(246,241,235,0.95) 0%, rgba(246,241,235,0) 100%);
+  backdrop-filter: blur(8px);
+}
+
+.nav-title {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--text-muted);
+}
+
+.nav-year {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-faint);
+}
+
+/* hero */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 6rem 2rem 4rem;
+  position: relative;
+}
+
+.hero-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+}
+
+.hero-title {
+  font-family: var(--font-serif);
+  font-size: clamp(3rem, 10vw, 7rem);
+  font-weight: 400;
+  line-height: 1.05;
+  color: var(--text);
+  max-width: 900px;
+  margin-bottom: 1.5rem;
+}
+
+.hero-subtitle {
+  font-family: var(--font-serif);
+  font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+  font-style: italic;
+  color: var(--text-muted);
+  max-width: 500px;
+  margin-bottom: 3rem;
+}
+
+.hero-scroll {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  animation: float 3s ease-in-out infinite;
+}
+
+.hero-scroll-line {
+  width: 1px;
+  height: 40px;
+  background: var(--text-faint);
+}
+
+@keyframes float {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-6px); }
+}
+
+/* manifesto */
+.manifesto {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 6rem 2rem;
+  text-align: center;
+}
+
+.manifesto p {
+  font-family: var(--font-serif);
+  font-size: clamp(1.15rem, 2vw, 1.45rem);
+  line-height: 1.7;
+  color: var(--text);
+  margin-bottom: 1.5rem;
+}
+
+.manifesto .attribution {
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-style: normal;
+  margin-top: 2rem;
+  letter-spacing: 0.05em;
+}
+
+/* divider */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  max-width: 200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.divider-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+/* archive header */
+.archive-header {
+  text-align: center;
+  padding: 6rem 2rem 3rem;
+}
+
+.archive-header h2 {
+  font-family: var(--font-serif);
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 400;
+  margin-bottom: 1rem;
+}
+
+.archive-header p {
+  color: var(--text-muted);
+  font-size: 1rem;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+/* archive grid */
+.archive {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem 6rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+/* exhibit card */
+.exhibit {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  padding: 2rem 1.5rem 1.5rem;
+  cursor: default;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.exhibit:hover {
+  background: var(--paper-dark);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px var(--shadow);
+}
+
+.exhibit-number {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 1.5rem;
+}
+
+.exhibit-visual {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background: var(--paper-dark);
+}
+
+/* CSS art for each exhibit */
+
+/* Envelope */
+.art-envelope {
+  width: 60%;
+  aspect-ratio: 1.4 / 1;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  position: relative;
+  box-shadow: 2px 2px 12px rgba(0,0,0,0.04);
+}
+.art-envelope::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(135deg, transparent 49.5%, var(--border) 49.5%, var(--border) 50.5%, transparent 50.5%),
+              linear-gradient(225deg, transparent 49.5%, var(--border) 49.5%, var(--border) 50.5%, transparent 50.5%);
+}
+.art-envelope .stamp {
+  position: absolute;
+  top: 12%;
+  right: 12%;
+  width: 18%;
+  aspect-ratio: 1 / 1.2;
+  border: 1px solid var(--text-faint);
+  background: var(--accent-light);
+  opacity: 0.4;
+}
+.art-envelope .address-line {
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  transform: translateX(-50%);
+  width: 40%;
+  height: 1px;
+  background: var(--text-faint);
+  margin-bottom: 6px;
+  opacity: 0.3;
+}
+.art-envelope .address-line:nth-child(3) { top: 58%; width: 32%; }
+.art-envelope .address-line:nth-child(4) { top: 64%; width: 36%; }
+
+/* Cassette */
+.art-cassette {
+  width: 55%;
+  aspect-ratio: 1.5 / 1;
+  background: linear-gradient(180deg, #3a3530, #2a2622);
+  border-radius: 3px;
+  position: relative;
+  box-shadow: 3px 3px 16px rgba(0,0,0,0.12);
+}
+.art-cassette .reel {
+  position: absolute;
+  width: 28%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.08);
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.art-cassette .reel-l {
+  left: 15%;
+}
+.art-cassette .reel-r {
+  right: 15%;
+}
+.art-cassette .reel-inner {
+  width: 40%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.art-cassette .label-area {
+  position: absolute;
+  top: 36%;
+  left: 12%;
+  right: 12%;
+  bottom: 14%;
+  background: rgba(255,255,255,0.06);
+  border-radius: 1px;
+}
+.art-cassette .label-line {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 1px;
+  background: rgba(255,255,255,0.08);
+}
+.art-cassette .label-line:nth-child(6) { top: 48%; width: 50%; }
+.art-cassette .label-line:nth-child(7) { top: 54%; width: 35%; }
+.art-cassette .label-line:nth-child(8) { top: 60%; width: 42%; }
+
+/* Polaroid */
+.art-polaroid {
+  width: 50%;
+  background: #f5f0e8;
+  padding: 6% 6% 16% 6%;
+  box-shadow: 3px 3px 16px rgba(0,0,0,0.08);
+}
+.art-polaroid .image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: linear-gradient(135deg, #d4c9bb, #c4b7a5, #d4c9bb);
+  position: relative;
+}
+.art-polaroid .image::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%, rgba(0,0,0,0.04) 100%);
+}
+
+/* Recipe card */
+.art-recipe {
+  width: 55%;
+  aspect-ratio: 1 / 1.4;
+  background: #fffbf0;
+  border: 1px solid var(--border);
+  padding: 8%;
+  position: relative;
+}
+.art-recipe .recipe-title-line {
+  height: 3px;
+  background: var(--text);
+  width: 60%;
+  margin-bottom: 10%;
+  opacity: 0.6;
+}
+.art-recipe .recipe-line {
+  height: 1.5px;
+  background: var(--text-faint);
+  margin-bottom: 6%;
+  opacity: 0.25;
+}
+.art-recipe .recipe-line:nth-child(2) { width: 90%; }
+.art-recipe .recipe-line:nth-child(3) { width: 75%; }
+.art-recipe .recipe-line:nth-child(4) { width: 85%; }
+.art-recipe .recipe-line:nth-child(5) { width: 60%; }
+.art-recipe .recipe-line:nth-child(6) { width: 80%; margin-top: 12%; }
+.art-recipe .recipe-line:nth-child(7) { width: 70%; }
+.art-recipe .recipe-line:nth-child(8) { width: 88%; }
+
+/* Map */
+.art-map {
+  width: 65%;
+  aspect-ratio: 1.2 / 1;
+  background: #f0ebe0;
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.art-map::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 12px, rgba(154,111,84,0.06) 12px, rgba(154,111,84,0.06) 13px),
+    repeating-linear-gradient(90deg, transparent, transparent 12px, rgba(154,111,84,0.06) 12px, rgba(154,111,84,0.06) 13px);
+}
+.art-map .route {
+  position: absolute;
+  top: 30%;
+  left: 20%;
+  width: 55%;
+  height: 2px;
+  background: var(--accent);
+  opacity: 0.5;
+  border-radius: 2px;
+  transform: rotate(-15deg);
+}
+.art-map .route-dot {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.6;
+}
+.art-map .route-dot:nth-child(3) { top: 28%; left: 18%; }
+.art-map .route-dot:nth-child(4) { top: 38%; left: 72%; }
+.art-map .compass {
+  position: absolute;
+  bottom: 10%;
+  right: 12%;
+  width: 14%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  border: 1px solid var(--text-faint);
+  opacity: 0.3;
+}
+
+/* Film strip */
+.art-film {
+  width: 70%;
+  aspect-ratio: 1.6 / 1;
+  background: #2a2622;
+  border-radius: 2px;
+  position: relative;
+  display: flex;
+  gap: 4%;
+  padding: 4% 2%;
+}
+.art-film .frame {
+  flex: 1;
+  background: linear-gradient(135deg, #4a443e, #3a3530);
+  border-radius: 1px;
+  position: relative;
+}
+.art-film .frame::before,
+.art-film .frame::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 3px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 1px;
+}
+.art-film .frame::before { top: -1px; }
+.art-film .frame::after { bottom: -1px; }
+.art-film .sprocket {
+  position: absolute;
+  left: -3%;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8%;
+}
+.art-film .sprocket-r {
+  left: auto;
+  right: -3%;
+}
+.art-film .sprocket-hole {
+  width: 4px;
+  height: 4px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 50%;
+}
+
+/* Diary */
+.art-diary {
+  width: 45%;
+  aspect-ratio: 1 / 1.3;
+  background: #6b3f2e;
+  border-radius: 2px;
+  position: relative;
+  box-shadow: -4px 4px 16px rgba(0,0,0,0.1);
+}
+.art-diary .spine {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 8%;
+  background: #4a2a1e;
+  border-radius: 2px 0 0 2px;
+}
+.art-diary .pages {
+  position: absolute;
+  right: 4%;
+  top: 6%;
+  bottom: 6%;
+  width: 6%;
+  background: #f0e8dd;
+  opacity: 0.3;
+  border-radius: 1px;
+}
+.art-diary .lock {
+  position: absolute;
+  left: 18%;
+  top: 42%;
+  width: 10%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  border: 2px solid var(--accent-light);
+  opacity: 0.4;
+}
+.art-diary .lock::after {
+  content: '';
+  position: absolute;
+  top: -60%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 60%;
+  border: 2px solid var(--accent-light);
+  border-bottom: none;
+  border-radius: 50% 50% 0 0;
+  opacity: 0.4;
+}
+
+/* Ticket */
+.art-ticket {
+  width: 65%;
+  aspect-ratio: 1.8 / 1;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-right-style: dashed;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 2px 2px 12px rgba(0,0,0,0.04);
+}
+.art-ticket .tear {
+  position: absolute;
+  right: -1px;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  background: repeating-linear-gradient(90deg, transparent, transparent 3px, var(--bg) 3px, var(--bg) 6px);
+}
+.art-ticket .ticket-text {
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 2;
+}
+.art-ticket .ticket-text strong {
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  color: var(--text);
+}
+
+.exhibit-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.exhibit-era {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+}
+
+.exhibit-title {
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  font-weight: 400;
+  line-height: 1.3;
+  margin-bottom: 0.5rem;
+}
+
+.exhibit-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin-bottom: 1rem;
+  flex: 1;
+}
+
+.exhibit-note {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text-faint);
+  font-style: italic;
+  line-height: 1.4;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+/* featured exhibit */
+.featured {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 2rem 6rem;
+}
+
+.featured-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.featured-header h2 {
+  font-family: var(--font-serif);
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 400;
+  margin-bottom: 1rem;
+}
+
+.featured-header p {
+  color: var(--text-muted);
+  font-size: 1rem;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.featured-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.featured-card:hover {
+  box-shadow: 0 16px 48px var(--shadow);
+}
+
+.featured-visual {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper-dark);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Love letter visual */
+.art-loveletter {
+  width: 55%;
+  aspect-ratio: 1 / 1.3;
+  background: #fcf5e8;
+  border: 1px solid var(--border);
+  position: relative;
+  transform: rotate(-2deg);
+  box-shadow: 3px 3px 20px rgba(0,0,0,0.06);
+}
+.art-loveletter::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background:
+    linear-gradient(135deg, transparent 49%, var(--border) 49%, var(--border) 51%, transparent 51%);
+  opacity: 0.3;
+}
+.art-loveletter .seal {
+  position: absolute;
+  left: 50%;
+  top: 60%;
+  transform: translate(-50%, -50%) rotate(-5deg);
+  width: 18%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #b86b4a, #9a5638);
+  opacity: 0.7;
+  box-shadow: 1px 1px 6px rgba(0,0,0,0.1);
+}
+.art-loveletter .ink-line {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 1.5px;
+  background: var(--accent);
+  opacity: 0.15;
+}
+.art-loveletter .ink-line:nth-child(3) { top: 18%; width: 55%; }
+.art-loveletter .ink-line:nth-child(4) { top: 26%; width: 60%; }
+.art-loveletter .ink-line:nth-child(5) { top: 34%; width: 45%; }
+.art-loveletter .ink-line:nth-child(6) { top: 44%; width: 58%; }
+.art-loveletter .ink-line:nth-child(7) { top: 52%; width: 50%; }
+
+.featured-content {
+  padding: 2.5rem 2.5rem 2.5rem 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.featured-content .exhibit-era {
+  font-size: 0.7rem;
+}
+
+.featured-content .exhibit-title {
+  font-size: 1.8rem;
+  margin-bottom: 0.75rem;
+}
+
+.featured-content .exhibit-desc {
+  font-size: 0.95rem;
+}
+
+.featured-content .exhibit-note {
+  font-size: 0.7rem;
+}
+
+/* footer */
+footer {
+  text-align: center;
+  padding: 4rem 2rem;
+  border-top: 1px solid var(--border);
+  margin: 0 2rem;
+}
+
+footer p {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+footer .footer-mono {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--text-faint);
+  font-style: normal;
+}
+
+/* animation on scroll */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* responsive */
+@media (max-width: 768px) {
+  nav {
+    padding: 1rem 1.25rem;
+  }
+
+  .hero {
+    padding: 5rem 1.5rem 3rem;
+    min-height: 85vh;
+  }
+
+  .manifesto {
+    padding: 4rem 1.5rem;
+  }
+
+  .archive {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 0 1.25rem 4rem;
+  }
+
+  .featured-card {
+    grid-template-columns: 1fr;
+  }
+
+  .featured-content {
+    padding: 1.5rem;
+  }
+
+  .featured-visual {
+    aspect-ratio: 4 / 3;
+  }
+
+  footer {
+    margin: 0 1.25rem;
+    padding: 3rem 1.25rem;
+  }
+
+  .exhibit {
+    padding: 1.5rem 1.25rem 1.25rem;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .archive {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* extra wide: allow 4-column */
+@media (min-width: 1280px) {
+  .archive {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* staggered card reveal delays */
+.reveal:nth-child(1) { transition-delay: 0s; }
+.reveal:nth-child(2) { transition-delay: 0.05s; }
+.reveal:nth-child(3) { transition-delay: 0.1s; }
+.reveal:nth-child(4) { transition-delay: 0.15s; }
+.reveal:nth-child(5) { transition-delay: 0.2s; }
+.reveal:nth-child(6) { transition-delay: 0.25s; }
+.reveal:nth-child(7) { transition-delay: 0.3s; }
+.reveal:nth-child(8) { transition-delay: 0.35s; }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-title">The Before Times</span>
+  <span class="nav-year">Est. ~300,000 BCE</span>
+</nav>
+
+<section class="hero">
+  <span class="hero-label">Archive</span>
+  <h1 class="hero-title">The Before Times</h1>
+  <p class="hero-subtitle">A digital museum of analog life</p>
+  <div class="hero-scroll">
+    <span>Browse the collection</span>
+    <div class="hero-scroll-line"></div>
+  </div>
+</section>
+
+<section class="manifesto">
+  <p>
+    Before the machines learned to think, humans made things with their hands. 
+    They wrote letters on paper, wound their watches, and got lost without asking for directions.
+  </p>
+  <p>
+    This is an archive of what we almost lost. A curatorial act of remembering.
+  </p>
+  <p class="attribution">— Curatorial Statement, 2026</p>
+</section>
+
+<div class="divider">
+  <span class="divider-line"></span>
+  <span class="divider-dot"></span>
+  <span class="divider-line"></span>
+</div>
+
+<section class="archive-header">
+  <h2>Exhibits</h2>
+  <p>Selected artifacts from the pre-digital era, each carrying the weight of human intention.</p>
+</section>
+
+<section class="archive">
+
+  <article class="exhibit reveal">
+    <span class="exhibit-number">Exhibit No. 001</span>
+    <div class="exhibit-visual">
+      <div class="art-envelope">
+        <div class="stamp"></div>
+        <div class="address-line"></div>
+        <div class="address-line"></div>
+        <div class="address-line"></div>
+      </div>
+    </div>
+    <div class="exhibit-info">
+      <span class="exhibit-era">c. 2400 BCE — Present</span>
+      <h3 class="exhibit-title">Handwritten Letters</h3>
+      <p class="exhibit-desc">Correspondence carried across continents by ship, train, and foot. Each stroke of ink carried the weight of intention, the particular slant of a person's hand.</p>
+      <p class="exhibit-note">"A letter always arrives too early or too late." — Karl Kraus</p>
+    </div>
+  </article>
+
+  <article class="exhibit reveal">
+    <span class="exhibit-number">Exhibit No. 002</span>
+    <div class="exhibit-visual">
+      <div class="art-cassette">
+        <div class="reel reel-l"><div class="reel-inner"></div></div>
+        <div class="reel reel-r"><div class="reel-inner"></div></div>
+        <div class="label-area"></div>
+        <div class="label-line"></div>
+        <div class="label-line"></div>
+        <div class="label-line"></div>
+      </div>
+    </div>
+    <div class="exhibit-info">
+      <span class="exhibit-era">1963 — 2000s</span>
+      <h3 class="exhibit-title">The Mixtape</h3>
+      <p class="exhibit-desc">A curated sequence of songs recorded onto magnetic tape. An act of love, a declaration of taste. The perfect playlist required patience, precision, and perfect timing on the pause button.</p>
+      <p class="exhibit-note">Each tape was a fingerprint of someone's emotional landscape.</p>
+    </div>
+  </article>
+
+  <article class="exhibit reveal">
+    <span class="exhibit-number">Exhibit No. 003</span>
+    <div class="exhibit-visual">
+      <div class="art-polaroid">
+        <div class="image"></div>
+      </div>
+    </div>
+    <div class="exhibit-info">
+      <span class="exhibit-era">1948 — Present</span>
+      <h3 class="exhibit-title">Polaroid Photographs</h3>
+      <p class="exhibit-desc">An image that developed before your eyes. Impermanent, imperfect, irreplaceable. You could shake it to make it dry faster, though that was always a myth.</p>
+      <p class="exhibit-note">No filters. No retakes. Just a single frame of captured light.</p>
+    </div>
+  </article>
+
+  <article class="exhibit reveal">
+    <span class="exhibit-number">Exhibit No. 004</span>
+    <div class="exhibit-visual">
+      <div class="art-recipe">
+        <div class="recipe-title-line"></div>
+        <div class="recipe-line"></div>
+        <div class="recipe-line"></div>
+        <div class="recipe-line"></div>
+        <div class="recipe-line"></div>
+        <div class="recipe-line"></div>
+        <div class="recipe-line"></div>
+        <div class="recipe-line"></div>
+      </div>
+    </div>
+    <div class="exhibit-info">
+      <span class="exhibit-era">Antiquity — Present</span>
+      <h3 class="exhibit-title">Recipe Cards</h3>
+      <p class="exhibit-desc">Handwritten on index cards, stained with butter and chocolate. Measurements were approximate, instructions assumed knowledge. The cook knew more than the recipe told.</p>
+      <p class="exhibit-note">"A pinch of this, a handful of that. You'll know when it's right."</p>
+    </div>
+  </article>
+
+  <article class="exhibit reveal">
+    <span class="exhibit-number">Exhibit No. 005</span>
+    <div class="exhibit-visual">
+      <div class="art-map">
+        <div class="route"></div>
+        <div class="route-dot"></div>
+        <div class="route-dot"></div>
+        <div class="compass"></div>
+      </div>
+    </div>
+    <div class="exhibit-info">
+      <span class="exhibit-era">Prehistory — 2010s</span>
+      <h3 class="exhibit-title">Paper Maps</h3>
+      <p class="exhibit-desc">Large sheets of folded paper that demanded you unfold your entire world to see where you were. You could draw on them, lose them, and discover places you never meant to find.</p>
+      <p class="exhibit-note">Getting lost was part of the journey. There was no recalculating.</p>
+    </div>
+  </article>
+
+  <article class="exhibit reveal">
+    <span class="exhibit-number">Exhibit No. 006</span>
+    <div class="exhibit-visual">
+      <div class="art-film">
+        <div class="sprocket">
+          <div class="sprocket-hole"></div>
+          <div class="sprocket-hole"></div>
+          <div class="sprocket-hole"></div>
+          <div class="sprocket-hole"></div>
+        </div>
+        <div class="frame"></div>
+        <div class="frame"></div>
+        <div class="frame"></div>
+        <div class="sprocket sprocket-r">
+          <div class="sprocket-hole"></div>
+          <div class="sprocket-hole"></div>
+          <div class="sprocket-hole"></div>
+          <div class="sprocket-hole"></div>
+        </div>
+      </div>
+    </div>
+    <div class="exhibit-info">
+      <span class="exhibit-era">1888 — 2010s</span>
+      <h3 class="exhibit-title">Film Photography</h3>
+      <p class="exhibit-desc">Twenty-four or thirty-six frames per roll. Every click cost money and counted. You composed carefully, waited for the light, and hoped the lab got it right.</p>
+      <p class="exhibit-note">The anticipation of the developed roll is a lost form of suspense.</p>
+    </div>
+  </article>
+
+  <article class="exhibit reveal">
+    <span class="exhibit-number">Exhibit No. 007</span>
+    <div class="exhibit-visual">
+      <div class="art-diary">
+        <div class="spine"></div>
+        <div class="pages"></div>
+        <div class="lock"></div>
+      </div>
+    </div>
+    <div class="exhibit-info">
+      <span class="exhibit-era">c. 600 CE — Present</span>
+      <h3 class="exhibit-title">The Private Diary</h3>
+      <p class="exhibit-desc">Pages filled with uncensored thought, sealed with a tiny lock. The only reader was supposed to be yourself. A conversation with no audience but time.</p>
+      <p class="exhibit-note">"The diary is the only place where you can speak the truth." — Anais Nin</p>
+    </div>
+  </article>
+
+  <article class="exhibit reveal">
+    <span class="exhibit-number">Exhibit No. 008</span>
+    <div class="exhibit-visual">
+      <div class="art-ticket">
+        <div class="tear"></div>
+        <div class="ticket-text">
+          <strong>LIVE</strong><br>
+          SECTION &bull; ROW &bull; SEAT<br>
+          ADMIT ONE<br>
+          <span style="font-size:0.4rem">NO REFUNDS &bull; NO EXCHANGES</span>
+        </div>
+      </div>
+    </div>
+    <div class="exhibit-info">
+      <span class="exhibit-era">c. 1700s — 2020s</span>
+      <h3 class="exhibit-title">Concert Tickets</h3>
+      <p class="exhibit-desc">A physical proof that you were there. Often saved in shoeboxes, tucked into mirrors, or pinned to corkboards. The fading ink was evidence of a memory well kept.</p>
+      <p class="exhibit-note">You kept the stub. The digital ticket disappeared.</p>
+    </div>
+  </article>
+
+</section>
+
+<div class="divider">
+  <span class="divider-line"></span>
+  <span class="divider-dot"></span>
+  <span class="divider-line"></span>
+</div>
+
+<section class="featured">
+  <div class="featured-header">
+    <h2>Featured Exhibit</h2>
+    <p>A deeper look at one artifact from the collection.</p>
+  </div>
+
+  <div class="featured-card reveal">
+    <div class="featured-visual">
+      <div class="art-loveletter">
+        <div class="seal"></div>
+        <div class="ink-line"></div>
+        <div class="ink-line"></div>
+        <div class="ink-line"></div>
+        <div class="ink-line"></div>
+        <div class="ink-line"></div>
+      </div>
+    </div>
+    <div class="featured-content">
+      <span class="exhibit-era">c. 1700 BCE — 2000s</span>
+      <h3 class="exhibit-title">Love Letters</h3>
+      <p class="exhibit-desc">
+        Before texting, before DMs, before swiping right, there was the love letter. 
+        Written on aerogrammes, hidden in desks, pressed between books. 
+        The writer chose every word knowing it could not be unsent.
+      </p>
+      <p class="exhibit-desc">
+        Letters took days or weeks to arrive. Absence was measured in mail deliveries, 
+        not notification badges. The weight of paper carried the weight of feeling.
+      </p>
+      <p class="exhibit-note">
+        "I wrote to you every day for a year. You kept every one."
+      </p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>What else will we forget to remember?</p>
+  <span class="footer-mono">The Before Times &mdash; A Digital Archive of Analog Life &mdash; Est. 2026</span>
+</footer>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, {
+  threshold: 0.15,
+  rootMargin: '0px 0px -40px 0px'
+});
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
