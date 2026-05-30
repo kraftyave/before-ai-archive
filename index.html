@@ -3,42 +3,41 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Before Times — A Digital Archive of Analog Life</title>
+<title>The Human Archive — A Digital Museum of Analog Life</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&family=Fragment+Mono:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&family=Fragment+Mono:ital@0;1&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg: #f6f1eb;
   --paper: #f0e8dd;
   --paper-dark: #e5dacd;
   --text: #1a1817;
+  --text-rich: #2c2420;
   --text-muted: #7a7068;
   --text-faint: #b0a69c;
   --accent: #9a6f54;
   --accent-light: #c4957a;
+  --accent-deep: #7a553f;
   --sage: #7d8a6e;
+  --sage-light: #a8b59a;
+  --gold: #c4a268;
+  --gold-light: #d4b888;
   --border: #d6cbbf;
   --shadow: rgba(26, 24, 23, 0.06);
+  --shadow-strong: rgba(26, 24, 23, 0.1);
   --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'Fragment Mono', 'SF Mono', Monaco, monospace;
 }
 
-*, *::before, *::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-html {
-  scroll-behavior: smooth;
-  font-size: 16px;
-}
+html { scroll-behavior: smooth; font-size: 16px; }
 
 body {
   background-color: var(--bg);
-  color: var(--text);
+  color: var(--text-rich);
   font-family: var(--font-sans);
   font-weight: 300;
   line-height: 1.6;
@@ -46,1097 +45,1183 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-::selection {
-  background: var(--accent);
-  color: white;
-}
+::selection { background: var(--accent); color: white; }
 
-/* grain overlay */
 body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1000;
-  opacity: 0.035;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-repeat: repeat;
-  background-size: 256px 256px;
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 1000;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat; background-size: 256px 256px;
 }
 
-/* navigation */
+/* scroll progress */
+.scroll-track {
+  position: fixed; right: 1.5rem; top: 50%; transform: translateY(-50%);
+  z-index: 200; width: 1px; height: 200px;
+  background: var(--border); display: flex; flex-direction: column; align-items: center;
+}
+.scroll-thumb {
+  width: 1px; height: 40px; background: var(--accent);
+  position: absolute; top: 0; transition: top 0.1s ease;
+}
+.scroll-label {
+  position: fixed; right: 3.5rem; top: 50%; transform: translateY(-50%);
+  font-family: var(--font-mono); font-size: 0.55rem;
+  text-transform: uppercase; letter-spacing: 0.15em;
+  color: var(--text-faint); pointer-events: none; z-index: 200;
+  text-align: right; line-height: 1.3;
+  transition: opacity 0.4s; opacity: 0;
+}
+.scroll-label.visible { opacity: 1; }
+
+@media (max-width: 768px) {
+  .scroll-track, .scroll-label { display: none; }
+}
+
+/* nav */
 nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
   padding: 1.25rem 2.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  display: flex; justify-content: space-between; align-items: center;
   background: linear-gradient(180deg, rgba(246,241,235,0.95) 0%, rgba(246,241,235,0) 100%);
   backdrop-filter: blur(8px);
 }
-
-.nav-title {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--text-muted);
+.nav-title { font-family: var(--font-serif); font-size: 1rem; color: var(--text); font-weight: 400; }
+.nav-right { display: flex; align-items: center; gap: 1.5rem; }
+.nav-link {
+  font-family: var(--font-mono); font-size: 0.65rem;
+  text-transform: uppercase; letter-spacing: 0.15em;
+  color: var(--text-muted); text-decoration: none; transition: color 0.3s; cursor: pointer;
+  background: none; border: none;
 }
-
-.nav-year {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--text-faint);
-}
+.nav-link:hover { color: var(--accent); }
 
 /* hero */
 .hero {
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 6rem 2rem 4rem;
-  position: relative;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  text-align: center; padding: 6rem 2rem 4rem; position: relative;
 }
-
 .hero-label {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.3em;
-  color: var(--text-muted);
-  margin-bottom: 2rem;
+  font-family: var(--font-mono); font-size: 0.65rem;
+  text-transform: uppercase; letter-spacing: 0.3em;
+  color: var(--text-muted); margin-bottom: 1.5rem;
 }
-
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.4rem 1rem;
+  border: 1px solid var(--border);
+  font-family: var(--font-mono); font-size: 0.6rem;
+  text-transform: uppercase; letter-spacing: 0.2em;
+  color: var(--text-muted); margin-bottom: 2.5rem;
+  background: var(--paper);
+}
 .hero-title {
-  font-family: var(--font-serif);
-  font-size: clamp(3rem, 10vw, 7rem);
-  font-weight: 400;
-  line-height: 1.05;
-  color: var(--text);
-  max-width: 900px;
-  margin-bottom: 1.5rem;
+  font-family: var(--font-serif); font-size: clamp(3.5rem, 12vw, 8rem);
+  font-weight: 400; line-height: 1.0;
+  color: var(--text); max-width: 950px; margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
 }
-
+.hero-title em { font-style: italic; font-weight: 400; }
 .hero-subtitle {
-  font-family: var(--font-serif);
-  font-size: clamp(1.1rem, 2.5vw, 1.5rem);
-  font-style: italic;
-  color: var(--text-muted);
-  max-width: 500px;
+  font-family: var(--font-serif); font-size: clamp(1.1rem, 2.5vw, 1.45rem);
+  font-style: italic; color: var(--text-muted); max-width: 550px;
   margin-bottom: 3rem;
 }
-
+.hero-cta {
+  display: inline-flex; align-items: center; gap: 0.75rem;
+  padding: 0.75rem 1.75rem;
+  border: 1px solid var(--text-rich); background: transparent;
+  font-family: var(--font-mono); font-size: 0.7rem;
+  text-transform: uppercase; letter-spacing: 0.2em;
+  color: var(--text-rich); text-decoration: none; cursor: pointer;
+  transition: all 0.3s;
+}
+.hero-cta:hover { background: var(--text-rich); color: var(--bg); }
 .hero-scroll {
-  position: absolute;
-  bottom: 2.5rem;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--text-faint);
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
+  position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+  color: var(--text-faint); font-family: var(--font-mono); font-size: 0.6rem;
+  text-transform: uppercase; letter-spacing: 0.2em;
   animation: float 3s ease-in-out infinite;
 }
-
-.hero-scroll-line {
-  width: 1px;
-  height: 40px;
-  background: var(--text-faint);
-}
-
-@keyframes float {
-  0%, 100% { transform: translateX(-50%) translateY(0); }
-  50% { transform: translateX(-50%) translateY(-6px); }
-}
+.hero-scroll-line { width: 1px; height: 40px; background: var(--text-faint); }
+@keyframes float { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(-6px); } }
 
 /* manifesto */
 .manifesto {
-  max-width: 680px;
-  margin: 0 auto;
-  padding: 6rem 2rem;
-  text-align: center;
+  max-width: 720px; margin: 0 auto; padding: 5rem 2rem; text-align: center;
 }
-
 .manifesto p {
-  font-family: var(--font-serif);
-  font-size: clamp(1.15rem, 2vw, 1.45rem);
-  line-height: 1.7;
-  color: var(--text);
-  margin-bottom: 1.5rem;
+  font-family: var(--font-serif); font-size: clamp(1.1rem, 2vw, 1.35rem);
+  line-height: 1.7; color: var(--text-rich); margin-bottom: 1.25rem;
 }
-
 .manifesto .attribution {
-  font-family: var(--font-sans);
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  font-style: normal;
-  margin-top: 2rem;
-  letter-spacing: 0.05em;
+  font-family: var(--font-sans); font-size: 0.75rem; color: var(--text-muted);
+  font-style: normal; margin-top: 1.5rem; letter-spacing: 0.05em;
 }
 
-/* divider */
-.divider {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  max-width: 200px;
-  margin: 0 auto;
-  padding: 0 2rem;
+/* gallery room label */
+.gallery-room {
+  padding: 6rem 2rem 2rem;
+  max-width: 1280px; margin: 0 auto;
 }
-
-.divider-line {
-  flex: 1;
-  height: 1px;
-  background: var(--border);
+.gallery-room-inner {
+  display: flex; align-items: flex-start; gap: 2rem;
+  border-top: 2px solid var(--text-rich);
+  padding-top: 2rem;
 }
-
-.divider-dot {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--accent);
+.gallery-number {
+  font-family: var(--font-serif); font-size: 3.5rem; font-weight: 400;
+  color: var(--text-faint); line-height: 1; min-width: 2.5rem;
+  opacity: 0.5;
 }
-
-/* archive header */
-.archive-header {
-  text-align: center;
-  padding: 6rem 2rem 3rem;
+.gallery-info { flex: 1; }
+.gallery-label {
+  font-family: var(--font-mono); font-size: 0.6rem;
+  text-transform: uppercase; letter-spacing: 0.25em;
+  color: var(--text-muted); margin-bottom: 0.5rem;
 }
-
-.archive-header h2 {
-  font-family: var(--font-serif);
-  font-size: clamp(1.8rem, 4vw, 2.8rem);
-  font-weight: 400;
-  margin-bottom: 1rem;
+.gallery-name {
+  font-family: var(--font-serif); font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 400; color: var(--text-rich); margin-bottom: 0.4rem;
 }
-
-.archive-header p {
-  color: var(--text-muted);
-  font-size: 1rem;
-  max-width: 520px;
-  margin: 0 auto;
+.gallery-desc {
+  font-size: 0.9rem; color: var(--text-muted); max-width: 500px;
 }
-
-/* archive grid */
-.archive {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 2rem 6rem;
+.gallery-exhibits {
+  max-width: 1280px; margin: 0 auto;
+  padding: 2rem 2rem 5rem;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.25rem;
 }
 
 /* exhibit card */
 .exhibit {
   background: var(--paper);
   border: 1px solid var(--border);
-  padding: 2rem 1.5rem 1.5rem;
-  cursor: default;
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  display: flex;
-  flex-direction: column;
+  cursor: pointer;
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  display: flex; flex-direction: column;
   position: relative;
+  overflow: hidden;
 }
-
+.exhibit::after {
+  content: ''; position: absolute; inset: 0;
+  pointer-events: none;
+  transition: opacity 0.5s;
+  opacity: 0;
+}
 .exhibit:hover {
-  background: var(--paper-dark);
-  transform: translateY(-3px);
-  box-shadow: 0 12px 40px var(--shadow);
-}
-
-.exhibit-number {
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  color: var(--text-faint);
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  margin-bottom: 1.5rem;
-}
-
-.exhibit-visual {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  margin-bottom: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-  background: var(--paper-dark);
-}
-
-/* CSS art for each exhibit */
-
-/* Envelope */
-.art-envelope {
-  width: 60%;
-  aspect-ratio: 1.4 / 1;
-  background: var(--paper);
-  border: 1px solid var(--border);
-  position: relative;
-  box-shadow: 2px 2px 12px rgba(0,0,0,0.04);
-}
-.art-envelope::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: linear-gradient(135deg, transparent 49.5%, var(--border) 49.5%, var(--border) 50.5%, transparent 50.5%),
-              linear-gradient(225deg, transparent 49.5%, var(--border) 49.5%, var(--border) 50.5%, transparent 50.5%);
-}
-.art-envelope .stamp {
-  position: absolute;
-  top: 12%;
-  right: 12%;
-  width: 18%;
-  aspect-ratio: 1 / 1.2;
-  border: 1px solid var(--text-faint);
-  background: var(--accent-light);
-  opacity: 0.4;
-}
-.art-envelope .address-line {
-  position: absolute;
-  left: 50%;
-  top: 52%;
-  transform: translateX(-50%);
-  width: 40%;
-  height: 1px;
-  background: var(--text-faint);
-  margin-bottom: 6px;
-  opacity: 0.3;
-}
-.art-envelope .address-line:nth-child(3) { top: 58%; width: 32%; }
-.art-envelope .address-line:nth-child(4) { top: 64%; width: 36%; }
-
-/* Cassette */
-.art-cassette {
-  width: 55%;
-  aspect-ratio: 1.5 / 1;
-  background: linear-gradient(180deg, #3a3530, #2a2622);
-  border-radius: 3px;
-  position: relative;
-  box-shadow: 3px 3px 16px rgba(0,0,0,0.12);
-}
-.art-cassette .reel {
-  position: absolute;
-  width: 28%;
-  aspect-ratio: 1 / 1;
-  border-radius: 50%;
-  border: 2px solid rgba(255,255,255,0.08);
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.art-cassette .reel-l {
-  left: 15%;
-}
-.art-cassette .reel-r {
-  right: 15%;
-}
-.art-cassette .reel-inner {
-  width: 40%;
-  aspect-ratio: 1 / 1;
-  border-radius: 50%;
-  border: 1px solid rgba(255,255,255,0.06);
-}
-.art-cassette .label-area {
-  position: absolute;
-  top: 36%;
-  left: 12%;
-  right: 12%;
-  bottom: 14%;
-  background: rgba(255,255,255,0.06);
-  border-radius: 1px;
-}
-.art-cassette .label-line {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  height: 1px;
-  background: rgba(255,255,255,0.08);
-}
-.art-cassette .label-line:nth-child(6) { top: 48%; width: 50%; }
-.art-cassette .label-line:nth-child(7) { top: 54%; width: 35%; }
-.art-cassette .label-line:nth-child(8) { top: 60%; width: 42%; }
-
-/* Polaroid */
-.art-polaroid {
-  width: 50%;
-  background: #f5f0e8;
-  padding: 6% 6% 16% 6%;
-  box-shadow: 3px 3px 16px rgba(0,0,0,0.08);
-}
-.art-polaroid .image {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  background: linear-gradient(135deg, #d4c9bb, #c4b7a5, #d4c9bb);
-  position: relative;
-}
-.art-polaroid .image::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%, rgba(0,0,0,0.04) 100%);
-}
-
-/* Recipe card */
-.art-recipe {
-  width: 55%;
-  aspect-ratio: 1 / 1.4;
-  background: #fffbf0;
-  border: 1px solid var(--border);
-  padding: 8%;
-  position: relative;
-}
-.art-recipe .recipe-title-line {
-  height: 3px;
-  background: var(--text);
-  width: 60%;
-  margin-bottom: 10%;
-  opacity: 0.6;
-}
-.art-recipe .recipe-line {
-  height: 1.5px;
-  background: var(--text-faint);
-  margin-bottom: 6%;
-  opacity: 0.25;
-}
-.art-recipe .recipe-line:nth-child(2) { width: 90%; }
-.art-recipe .recipe-line:nth-child(3) { width: 75%; }
-.art-recipe .recipe-line:nth-child(4) { width: 85%; }
-.art-recipe .recipe-line:nth-child(5) { width: 60%; }
-.art-recipe .recipe-line:nth-child(6) { width: 80%; margin-top: 12%; }
-.art-recipe .recipe-line:nth-child(7) { width: 70%; }
-.art-recipe .recipe-line:nth-child(8) { width: 88%; }
-
-/* Map */
-.art-map {
-  width: 65%;
-  aspect-ratio: 1.2 / 1;
-  background: #f0ebe0;
-  border: 1px solid var(--border);
-  position: relative;
-  overflow: hidden;
-}
-.art-map::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    repeating-linear-gradient(0deg, transparent, transparent 12px, rgba(154,111,84,0.06) 12px, rgba(154,111,84,0.06) 13px),
-    repeating-linear-gradient(90deg, transparent, transparent 12px, rgba(154,111,84,0.06) 12px, rgba(154,111,84,0.06) 13px);
-}
-.art-map .route {
-  position: absolute;
-  top: 30%;
-  left: 20%;
-  width: 55%;
-  height: 2px;
-  background: var(--accent);
-  opacity: 0.5;
-  border-radius: 2px;
-  transform: rotate(-15deg);
-}
-.art-map .route-dot {
-  position: absolute;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--accent);
-  opacity: 0.6;
-}
-.art-map .route-dot:nth-child(3) { top: 28%; left: 18%; }
-.art-map .route-dot:nth-child(4) { top: 38%; left: 72%; }
-.art-map .compass {
-  position: absolute;
-  bottom: 10%;
-  right: 12%;
-  width: 14%;
-  aspect-ratio: 1 / 1;
-  border-radius: 50%;
-  border: 1px solid var(--text-faint);
-  opacity: 0.3;
-}
-
-/* Film strip */
-.art-film {
-  width: 70%;
-  aspect-ratio: 1.6 / 1;
-  background: #2a2622;
-  border-radius: 2px;
-  position: relative;
-  display: flex;
-  gap: 4%;
-  padding: 4% 2%;
-}
-.art-film .frame {
-  flex: 1;
-  background: linear-gradient(135deg, #4a443e, #3a3530);
-  border-radius: 1px;
-  position: relative;
-}
-.art-film .frame::before,
-.art-film .frame::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 6px;
-  height: 3px;
-  background: rgba(255,255,255,0.03);
-  border-radius: 1px;
-}
-.art-film .frame::before { top: -1px; }
-.art-film .frame::after { bottom: -1px; }
-.art-film .sprocket {
-  position: absolute;
-  left: -3%;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  gap: 8%;
-}
-.art-film .sprocket-r {
-  left: auto;
-  right: -3%;
-}
-.art-film .sprocket-hole {
-  width: 4px;
-  height: 4px;
-  background: rgba(255,255,255,0.03);
-  border-radius: 50%;
-}
-
-/* Diary */
-.art-diary {
-  width: 45%;
-  aspect-ratio: 1 / 1.3;
-  background: #6b3f2e;
-  border-radius: 2px;
-  position: relative;
-  box-shadow: -4px 4px 16px rgba(0,0,0,0.1);
-}
-.art-diary .spine {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 8%;
-  background: #4a2a1e;
-  border-radius: 2px 0 0 2px;
-}
-.art-diary .pages {
-  position: absolute;
-  right: 4%;
-  top: 6%;
-  bottom: 6%;
-  width: 6%;
-  background: #f0e8dd;
-  opacity: 0.3;
-  border-radius: 1px;
-}
-.art-diary .lock {
-  position: absolute;
-  left: 18%;
-  top: 42%;
-  width: 10%;
-  aspect-ratio: 1 / 1;
-  border-radius: 50%;
-  border: 2px solid var(--accent-light);
-  opacity: 0.4;
-}
-.art-diary .lock::after {
-  content: '';
-  position: absolute;
-  top: -60%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60%;
-  height: 60%;
-  border: 2px solid var(--accent-light);
-  border-bottom: none;
-  border-radius: 50% 50% 0 0;
-  opacity: 0.4;
-}
-
-/* Ticket */
-.art-ticket {
-  width: 65%;
-  aspect-ratio: 1.8 / 1;
-  background: var(--paper);
-  border: 1px solid var(--border);
-  border-right-style: dashed;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 2px 2px 12px rgba(0,0,0,0.04);
-}
-.art-ticket .tear {
-  position: absolute;
-  right: -1px;
-  top: 0;
-  bottom: 0;
-  width: 8px;
-  background: repeating-linear-gradient(90deg, transparent, transparent 3px, var(--bg) 3px, var(--bg) 6px);
-}
-.art-ticket .ticket-text {
-  font-family: var(--font-mono);
-  font-size: 0.5rem;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--text-muted);
-  text-align: center;
-  line-height: 2;
-}
-.art-ticket .ticket-text strong {
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
-  color: var(--text);
-}
-
-.exhibit-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.exhibit-era {
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  color: var(--accent);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-bottom: 0.5rem;
-}
-
-.exhibit-title {
-  font-family: var(--font-serif);
-  font-size: 1.3rem;
-  font-weight: 400;
-  line-height: 1.3;
-  margin-bottom: 0.5rem;
-}
-
-.exhibit-desc {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  line-height: 1.55;
-  margin-bottom: 1rem;
-  flex: 1;
-}
-
-.exhibit-note {
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  color: var(--text-faint);
-  font-style: italic;
-  line-height: 1.4;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--border);
-}
-
-/* featured exhibit */
-.featured {
-  max-width: 1080px;
-  margin: 0 auto;
-  padding: 0 2rem 6rem;
-}
-
-.featured-header {
-  text-align: center;
-  margin-bottom: 3rem;
-}
-
-.featured-header h2 {
-  font-family: var(--font-serif);
-  font-size: clamp(1.8rem, 4vw, 2.8rem);
-  font-weight: 400;
-  margin-bottom: 1rem;
-}
-
-.featured-header p {
-  color: var(--text-muted);
-  font-size: 1rem;
-  max-width: 520px;
-  margin: 0 auto;
-}
-
-.featured-card {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3rem;
-  background: var(--paper);
-  border: 1px solid var(--border);
-  overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.featured-card:hover {
+  transform: translateY(-4px);
   box-shadow: 0 16px 48px var(--shadow);
 }
+.exhibit:hover::after { opacity: 1; }
+.exhibit:active { transform: translateY(-1px); }
 
-.featured-visual {
-  aspect-ratio: 1 / 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.exhibit-visual {
+  width: 100%; aspect-ratio: 16 / 10;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
   background: var(--paper-dark);
+}
+.exhibit-visual .prompt-badge {
+  position: absolute; bottom: 0.5rem; right: 0.5rem;
+  font-family: var(--font-mono); font-size: 0.5rem;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-faint); background: rgba(246,241,235,0.85);
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--border);
+  pointer-events: none;
+}
+
+.exhibit-body { padding: 1.25rem 1.25rem 1.25rem; flex: 1; display: flex; flex-direction: column; }
+.exhibit-era {
+  font-family: var(--font-mono); font-size: 0.6rem;
+  color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em;
+  margin-bottom: 0.35rem;
+}
+.exhibit-title {
+  font-family: var(--font-serif); font-size: 1.2rem;
+  font-weight: 400; line-height: 1.3; margin-bottom: 0.4rem;
+}
+.exhibit-desc {
+  font-size: 0.8rem; color: var(--text-muted);
+  line-height: 1.5; margin-bottom: 0.75rem; flex: 1;
+}
+.exhibit-tags {
+  display: flex; flex-wrap: wrap; gap: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+.exhibit-tag {
+  font-family: var(--font-mono); font-size: 0.55rem;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  padding: 0.15rem 0.5rem;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+/* CSS art for cards */
+.art-envelope { width: 55%; aspect-ratio: 1.4/1; background: var(--paper); border: 1px solid var(--border); position: relative; box-shadow: 2px 2px 12px rgba(0,0,0,0.04); }
+.art-envelope::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, transparent 49.5%, var(--border) 49.5%, var(--border) 50.5%, transparent 50.5%), linear-gradient(225deg, transparent 49.5%, var(--border) 49.5%, var(--border) 50.5%, transparent 50.5%); }
+.art-envelope .stamp { position: absolute; top: 12%; right: 12%; width: 18%; aspect-ratio: 1/1.2; border: 1px solid var(--text-faint); background: linear-gradient(135deg, var(--accent-light), var(--accent)); opacity: 0.3; }
+.art-envelope .addr { position: absolute; left: 50%; transform: translateX(-50%); height: 1px; background: var(--text-faint); opacity: 0.25; }
+.art-envelope .addr:nth-of-type(2) { top: 48%; width: 40%; }
+.art-envelope .addr:nth-of-type(3) { top: 56%; width: 32%; }
+.art-envelope .addr:nth-of-type(4) { top: 64%; width: 36%; }
+
+.art-cassette { width: 55%; aspect-ratio: 1.5/1; background: linear-gradient(180deg,#3a3530,#2a2622); border-radius: 3px; position: relative; box-shadow: 3px 3px 16px rgba(0,0,0,0.12); }
+.art-cassette .reel { position: absolute; width: 26%; aspect-ratio: 1/1; border-radius: 50%; border: 2px solid rgba(255,255,255,0.07); top: 44%; transform: translateY(-50%); display: flex; align-items: center; justify-content: center; }
+.art-cassette .reel-l { left: 16%; }
+.art-cassette .reel-r { right: 16%; }
+.art-cassette .reel-inner { width: 38%; aspect-ratio: 1/1; border-radius: 50%; border: 1px solid rgba(255,255,255,0.05); }
+.art-cassette .label-bg { position: absolute; top: 38%; left: 10%; right: 10%; bottom: 10%; background: rgba(255,255,255,0.05); border-radius: 1px; }
+.art-cassette .ll { position: absolute; left: 50%; transform: translateX(-50%); height: 1px; background: rgba(255,255,255,0.06); }
+.art-cassette .ll:nth-of-type(4) { top: 50%; width: 45%; }
+.art-cassette .ll:nth-of-type(5) { top: 56%; width: 30%; }
+.art-cassette .ll:nth-of-type(6) { top: 62%; width: 38%; }
+
+.art-polaroid { width: 48%; background: #f5f0e8; padding: 5% 5% 15% 5%; box-shadow: 3px 3px 16px rgba(0,0,0,0.07); }
+.art-polaroid .polaroid-img { width: 100%; aspect-ratio: 1/1; background: linear-gradient(135deg,#d4c9bb,#c4b7a5,#d4c9bb); position: relative; }
+.art-polaroid .polaroid-img::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 50%, rgba(0,0,0,0.03) 100%); }
+
+.art-recipe { width: 52%; aspect-ratio: 1/1.35; background: #fffbf0; border: 1px solid var(--border); padding: 8%; position: relative; }
+.art-recipe .r-line { height: 1.5px; background: var(--text-faint); margin-bottom: 6%; }
+.art-recipe .r-line:nth-child(1) { width: 55%; height: 3px; background: var(--text); opacity: 0.5; margin-bottom: 10%; }
+.art-recipe .r-line:nth-child(2) { width: 90%; }
+.art-recipe .r-line:nth-child(3) { width: 72%; }
+.art-recipe .r-line:nth-child(4) { width: 84%; }
+.art-recipe .r-line:nth-child(5) { width: 56%; }
+.art-recipe .r-line:nth-child(6) { width: 78%; margin-top: 10%; }
+.art-recipe .r-line:nth-child(7) { width: 65%; }
+
+.art-map { width: 60%; aspect-ratio: 1.3/1; background: #f0ebe0; border: 1px solid var(--border); position: relative; overflow: hidden; }
+.art-map::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg,transparent,transparent 10px,rgba(154,111,84,0.05) 10px,rgba(154,111,84,0.05) 11px), repeating-linear-gradient(90deg,transparent,transparent 10px,rgba(154,111,84,0.05) 10px,rgba(154,111,84,0.05) 11px); }
+.art-map .m-route { position: absolute; top: 30%; left: 18%; width: 50%; height: 2px; background: var(--accent); opacity: 0.35; border-radius: 2px; transform: rotate(-12deg); }
+.art-map .m-dot { position: absolute; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); opacity: 0.5; }
+.art-map .m-dot:nth-child(2) { top: 28%; left: 16%; }
+.art-map .m-dot:nth-child(3) { top: 36%; left: 64%; }
+.art-map .m-compass { position: absolute; bottom: 8%; right: 10%; width: 12%; aspect-ratio: 1/1; border-radius: 50%; border: 1px solid var(--text-faint); opacity: 0.2; }
+
+.art-film { width: 68%; aspect-ratio: 1.6/1; background: #2a2622; border-radius: 2px; display: flex; gap: 4%; padding: 3% 2%; position: relative; }
+.art-film .f-frame { flex: 1; background: linear-gradient(135deg,#4a443e,#3a3530); border-radius: 1px; position: relative; }
+.art-film .f-sprocket { position: absolute; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10%; }
+.art-film .f-sprocket-l { left: -2%; }
+.art-film .f-sprocket-r { right: -2%; }
+.art-film .f-hole { width: 3px; height: 3px; background: rgba(255,255,255,0.03); border-radius: 50%; }
+
+.art-vinyl { width: 55%; aspect-ratio: 1/1; border-radius: 50%; background: linear-gradient(135deg,#1a1a1a,#0a0a0a); position: relative; box-shadow: 3px 3px 20px rgba(0,0,0,0.15); }
+.art-vinyl::before { content: ''; position: absolute; inset: 15%; border-radius: 50%; background: linear-gradient(135deg,#2a2a2a,#1a1a1a); }
+.art-vinyl::after { content: ''; position: absolute; inset: 32%; border-radius: 50%; border: 1px solid rgba(255,255,255,0.03); }
+.art-vinyl .v-label { position: absolute; inset: 22%; border-radius: 50%; background: linear-gradient(135deg,var(--accent-light),var(--accent)); opacity: 0.15; }
+.art-vinyl .v-hole { position: absolute; width: 6%; aspect-ratio: 1/1; border-radius: 50%; background: var(--bg); top: 50%; left: 50%; transform: translate(-50%,-50%); opacity: 0.8; }
+.art-vinyl .v-groove { position: absolute; inset: 8%; border-radius: 50%; border: 1px solid rgba(255,255,255,0.02); }
+.art-vinyl .v-groove:nth-child(6) { inset: 14%; }
+.art-vinyl .v-groove:nth-child(7) { inset: 20%; }
+.art-vinyl .v-groove:nth-child(8) { inset: 26%; }
+
+.art-diary { width: 42%; aspect-ratio: 1/1.3; background: #6b3f2e; border-radius: 2px; position: relative; box-shadow: -4px 4px 16px rgba(0,0,0,0.1); }
+.art-diary .d-spine { position: absolute; left: 0; top: 0; bottom: 0; width: 8%; background: #4a2a1e; border-radius: 2px 0 0 2px; }
+.art-diary .d-pages { position: absolute; right: 4%; top: 5%; bottom: 5%; width: 5%; background: #f0e8dd; opacity: 0.2; border-radius: 1px; }
+.art-diary .d-lock { position: absolute; left: 18%; top: 42%; width: 10%; aspect-ratio: 1/1; border-radius: 50%; border: 2px solid var(--accent-light); opacity: 0.35; }
+.art-diary .d-lock::after { content: ''; position: absolute; top: -55%; left: 50%; transform: translateX(-50%); width: 55%; height: 55%; border: 2px solid var(--accent-light); border-bottom: none; border-radius: 50% 50% 0 0; opacity: 0.35; }
+
+.art-ticket { width: 62%; aspect-ratio: 1.8/1; background: var(--paper); border: 1px solid var(--border); border-right-style: dashed; position: relative; display: flex; align-items: center; justify-content: center; box-shadow: 2px 2px 12px rgba(0,0,0,0.04); }
+.art-ticket .t-tear { position: absolute; right: -1px; top: 0; bottom: 0; width: 6px; background: repeating-linear-gradient(90deg,transparent,transparent 2px,var(--bg) 2px,var(--bg) 5px); }
+.art-ticket .t-text { font-family: var(--font-mono); font-size: 0.45rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); text-align: center; line-height: 1.8; }
+.art-ticket .t-text strong { font-size: 0.6rem; letter-spacing: 0.08em; color: var(--text); }
+
+.art-stamp { width: 50%; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6%; aspect-ratio: 1.5/1; }
+.art-stamp .s-item { background: var(--paper); border: 1px solid var(--border); aspect-ratio: 1/1.2; display: flex; align-items: center; justify-content: center; position: relative; box-shadow: 1px 1px 6px rgba(0,0,0,0.03); }
+.art-stamp .s-item::before { content: ''; position: absolute; inset: 6px; border: 1px dashed var(--text-faint); opacity: 0.15; }
+.art-stamp .s-fill { width: 50%; aspect-ratio: 1/1; border-radius: 50%; opacity: 0.3; }
+.art-stamp .s-fill:nth-child(2) { background: var(--accent); }
+.art-stamp .s-item:nth-child(2) .s-fill { background: var(--sage); }
+.art-stamp .s-item:nth-child(3) .s-fill { background: var(--gold); }
+
+.art-typewriter { width: 58%; aspect-ratio: 1.6/1; position: relative; }
+.art-typewriter .tw-body { position: absolute; bottom: 0; left: 5%; right: 5%; height: 60%; background: linear-gradient(180deg,#3a3530,#2a2622); border-radius: 2px; }
+.art-typewriter .tw-roller { position: absolute; top: 18%; left: 8%; right: 8%; height: 8%; background: #2a2622; border-radius: 2px; }
+.art-typewriter .tw-paper { position: absolute; top: 0%; left: 22%; right: 22%; height: 40%; background: var(--paper); border: 1px solid var(--border); border-bottom: none; }
+.art-typewriter .tw-key { position: absolute; bottom: 6%; width: 4%; aspect-ratio: 1/1.2; background: rgba(255,255,255,0.06); border-radius: 1px; }
+.art-typewriter .tw-key:nth-child(5) { left: 18%; } .art-typewriter .tw-key:nth-child(6) { left: 24%; } .art-typewriter .tw-key:nth-child(7) { left: 30%; }
+.art-typewriter .tw-key:nth-child(8) { left: 38%; } .art-typewriter .tw-key:nth-child(9) { left: 44%; } .art-typewriter .tw-key:nth-child(10) { left: 50%; }
+.art-typewriter .tw-key:nth-child(11) { left: 58%; } .art-typewriter .tw-key:nth-child(12) { left: 64%; } .art-typewriter .tw-key:nth-child(13) { left: 70%; }
+
+.art-heart { width: 40%; aspect-ratio: 1/1; position: relative; display: flex; align-items: center; justify-content: center; }
+.art-heart .h-shape { width: 70%; aspect-ratio: 1/1; background: linear-gradient(135deg, var(--accent-light), var(--accent)); clip-path: path('M50,30 A20,20,0,0,1,85,30 A20,20,0,0,1,120,30 Q120,60,85,95 Q50,60,50,30'); transform: scale(0.7); opacity: 0.4; }
+.art-heart .h-text { position: absolute; font-family: var(--font-serif); font-size: 3rem; color: var(--accent); opacity: 0.1; font-style: italic; }
+
+/* modal */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 500;
+  background: rgba(26, 24, 23, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; visibility: hidden;
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  padding: 2rem;
+  overflow-y: auto;
+}
+.modal-overlay.active { opacity: 1; visibility: visible; }
+
+.modal {
+  background: var(--bg);
+  max-width: 900px; width: 100%;
+  max-height: 90vh; overflow-y: auto;
+  position: relative;
+  transform: translateY(40px) scale(0.97);
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.modal-overlay.active .modal { transform: translateY(0) scale(1); }
+
+.modal-close {
+  position: fixed; top: 1.25rem; right: 1.25rem;
+  width: 2.5rem; height: 2.5rem;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-sans); font-size: 1.2rem;
+  color: var(--text-muted);
+  transition: all 0.3s;
+  z-index: 10;
+}
+.modal-close:hover { background: var(--text-rich); color: var(--bg); border-color: var(--text-rich); }
+
+.modal-image {
+  width: 100%; aspect-ratio: 16 / 10;
+  background: var(--paper-dark);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 2rem 3rem;
+  text-align: center;
   position: relative;
   overflow: hidden;
 }
+.modal-image-grain {
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.02) 2px,rgba(0,0,0,0.02) 3px);
+  pointer-events: none;
+}
+.modal-prompt-label {
+  font-family: var(--font-mono); font-size: 0.55rem;
+  text-transform: uppercase; letter-spacing: 0.2em;
+  color: var(--text-faint); margin-bottom: 0.75rem;
+}
+.modal-prompt {
+  font-family: var(--font-serif); font-style: italic;
+  font-size: clamp(0.85rem, 1.5vw, 1.05rem);
+  color: var(--text-muted); max-width: 600px;
+  line-height: 1.5;
+}
+.modal-dimensions {
+  margin-top: 0.75rem;
+  font-family: var(--font-mono); font-size: 0.55rem;
+  color: var(--text-faint); letter-spacing: 0.1em;
+}
 
-/* Love letter visual */
-.art-loveletter {
-  width: 55%;
-  aspect-ratio: 1 / 1.3;
-  background: #fcf5e8;
+.modal-body { padding: 2rem 2.5rem 2.5rem; }
+.modal-header { margin-bottom: 1.5rem; }
+.modal-era {
+  font-family: var(--font-mono); font-size: 0.65rem;
+  color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+}
+.modal-title {
+  font-family: var(--font-serif); font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: 400; line-height: 1.15; margin-bottom: 0.5rem;
+}
+.modal-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem; }
+.modal-tag {
+  font-family: var(--font-mono); font-size: 0.55rem;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  padding: 0.2rem 0.6rem;
   border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.modal-description p {
+  font-size: 0.95rem; line-height: 1.7; color: var(--text-rich);
+  margin-bottom: 1rem;
+}
+
+.modal-meta {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem; margin-top: 1.5rem; padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+.modal-meta-item {}
+.modal-meta-label {
+  font-family: var(--font-mono); font-size: 0.55rem;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--text-faint); margin-bottom: 0.2rem;
+}
+.modal-meta-value {
+  font-size: 0.8rem; color: var(--text-muted);
+}
+
+.modal-curator {
+  margin-top: 1.5rem; padding: 1.25rem 1.5rem;
+  background: var(--paper);
+  border-left: 2px solid var(--accent);
+}
+.modal-curator-label {
+  font-family: var(--font-mono); font-size: 0.55rem;
+  text-transform: uppercase; letter-spacing: 0.15em;
+  color: var(--accent); margin-bottom: 0.35rem;
+}
+.modal-curator-note {
+  font-family: var(--font-serif); font-style: italic;
+  font-size: 0.95rem; color: var(--text-muted); line-height: 1.5;
+}
+
+/* divider */
+.divider { display: flex; align-items: center; gap: 1rem; max-width: 160px; margin: 0 auto; padding: 0 2rem; }
+.divider-line { flex: 1; height: 1px; background: var(--border); }
+.divider-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--accent); }
+
+/* submit section */
+.submit-section {
+  max-width: 720px; margin: 0 auto;
+  padding: 5rem 2rem 6rem;
+  text-align: center;
+}
+.submit-section h2 {
+  font-family: var(--font-serif); font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 400; margin-bottom: 0.75rem;
+}
+.submit-section .submit-intro {
+  color: var(--text-muted); font-size: 0.95rem;
+  max-width: 500px; margin: 0 auto 2.5rem;
+}
+
+.submit-form {
+  text-align: left;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+.submit-form .full-width { grid-column: 1 / -1; }
+
+.form-group {}
+.form-label {
+  display: block;
+  font-family: var(--font-mono); font-size: 0.6rem;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--text-muted); margin-bottom: 0.4rem;
+}
+.form-label .required { color: var(--accent); }
+.form-input, .form-select, .form-textarea {
+  width: 100%;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  padding: 0.65rem 0.9rem;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  color: var(--text-rich);
+  transition: border-color 0.3s;
+  outline: none;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: var(--accent);
+}
+.form-textarea {
+  min-height: 120px; resize: vertical;
+  line-height: 1.5;
+}
+.form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237a7068' stroke-width='1' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 0.75rem center;
+  background-size: 10px;
+}
+.form-file-wrapper {
   position: relative;
-  transform: rotate(-2deg);
-  box-shadow: 3px 3px 20px rgba(0,0,0,0.06);
 }
-.art-loveletter::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background:
-    linear-gradient(135deg, transparent 49%, var(--border) 49%, var(--border) 51%, transparent 51%);
-  opacity: 0.3;
+.form-file-input {
+  position: absolute; inset: 0; opacity: 0; cursor: pointer;
 }
-.art-loveletter .seal {
-  position: absolute;
-  left: 50%;
-  top: 60%;
-  transform: translate(-50%, -50%) rotate(-5deg);
-  width: 18%;
-  aspect-ratio: 1 / 1;
+.form-file-label {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.65rem 0.9rem;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-style: dashed;
+  font-size: 0.8rem;
+  color: var(--text-faint);
+  cursor: pointer;
+}
+.form-file-label:hover { border-color: var(--accent); }
+.form-file-icon { font-size: 1rem; }
+
+.form-submit {
+  grid-column: 1 / -1;
+  padding: 0.85rem 2rem;
+  background: var(--text-rich);
+  border: none;
+  color: var(--bg);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.form-submit:hover { background: var(--accent-deep); }
+.form-submit:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.submit-success {
+  display: none;
+  padding: 3rem 2rem;
+  text-align: center;
+}
+.submit-success.visible { display: block; }
+.submit-success-icon {
+  width: 48px; height: 48px;
+  border: 2px solid var(--sage);
   border-radius: 50%;
-  background: linear-gradient(135deg, #b86b4a, #9a5638);
-  opacity: 0.7;
-  box-shadow: 1px 1px 6px rgba(0,0,0,0.1);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 1rem;
+  font-size: 1.3rem; color: var(--sage);
 }
-.art-loveletter .ink-line {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  height: 1.5px;
-  background: var(--accent);
-  opacity: 0.15;
+.submit-success h3 {
+  font-family: var(--font-serif);
+  font-size: 1.4rem; font-weight: 400;
+  margin-bottom: 0.5rem;
 }
-.art-loveletter .ink-line:nth-child(3) { top: 18%; width: 55%; }
-.art-loveletter .ink-line:nth-child(4) { top: 26%; width: 60%; }
-.art-loveletter .ink-line:nth-child(5) { top: 34%; width: 45%; }
-.art-loveletter .ink-line:nth-child(6) { top: 44%; width: 58%; }
-.art-loveletter .ink-line:nth-child(7) { top: 52%; width: 50%; }
-
-.featured-content {
-  padding: 2.5rem 2.5rem 2.5rem 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.featured-content .exhibit-era {
-  font-size: 0.7rem;
-}
-
-.featured-content .exhibit-title {
-  font-size: 1.8rem;
-  margin-bottom: 0.75rem;
-}
-
-.featured-content .exhibit-desc {
-  font-size: 0.95rem;
-}
-
-.featured-content .exhibit-note {
-  font-size: 0.7rem;
-}
+.submit-success p { color: var(--text-muted); font-size: 0.9rem; }
 
 /* footer */
 footer {
-  text-align: center;
-  padding: 4rem 2rem;
-  border-top: 1px solid var(--border);
-  margin: 0 2rem;
+  text-align: center; padding: 3rem 2rem;
+  border-top: 1px solid var(--border); margin: 0 2rem;
 }
-
 footer p {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: 1.1rem;
-  color: var(--text-muted);
-  margin-bottom: 1rem;
+  font-family: var(--font-serif); font-style: italic;
+  font-size: 1rem; color: var(--text-muted); margin-bottom: 0.5rem;
 }
-
 footer .footer-mono {
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--text-faint);
-  font-style: normal;
+  font-family: var(--font-mono); font-size: 0.6rem;
+  text-transform: uppercase; letter-spacing: 0.15em;
+  color: var(--text-faint); font-style: normal;
 }
 
-/* animation on scroll */
-.reveal {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.reveal.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
+/* reveal */
+.reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+.reveal.visible { opacity: 1; transform: translateY(0); }
 
 /* responsive */
 @media (max-width: 768px) {
-  nav {
-    padding: 1rem 1.25rem;
-  }
-
-  .hero {
-    padding: 5rem 1.5rem 3rem;
-    min-height: 85vh;
-  }
-
-  .manifesto {
-    padding: 4rem 1.5rem;
-  }
-
-  .archive {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-    padding: 0 1.25rem 4rem;
-  }
-
-  .featured-card {
-    grid-template-columns: 1fr;
-  }
-
-  .featured-content {
-    padding: 1.5rem;
-  }
-
-  .featured-visual {
-    aspect-ratio: 4 / 3;
-  }
-
-  footer {
-    margin: 0 1.25rem;
-    padding: 3rem 1.25rem;
-  }
-
-  .exhibit {
-    padding: 1.5rem 1.25rem 1.25rem;
-  }
+  nav { padding: 1rem 1.25rem; }
+  .nav-title { font-size: 0.85rem; }
+  .nav-link { font-size: 0.55rem; }
+  .hero { padding: 5rem 1.5rem 3rem; min-height: 85vh; }
+  .hero-badge { font-size: 0.5rem; padding: 0.3rem 0.75rem; }
+  .manifesto { padding: 3rem 1.5rem; }
+  .gallery-room { padding: 3rem 1.25rem 1.5rem; }
+  .gallery-room-inner { flex-direction: column; gap: 0.5rem; }
+  .gallery-number { font-size: 2.5rem; }
+  .gallery-exhibits { grid-template-columns: 1fr; gap: 1rem; padding: 1.5rem 1.25rem 3rem; }
+  .modal-body { padding: 1.25rem; }
+  .modal-image { padding: 1.5rem; aspect-ratio: 4/3; }
+  .modal-meta { grid-template-columns: 1fr 1fr; }
+  .submit-form { grid-template-columns: 1fr; }
+  .submit-section { padding: 3rem 1.25rem 4rem; }
+  footer { margin: 0 1.25rem; padding: 2rem 1.25rem; }
+  .modal-close { top: 0.75rem; right: 0.75rem; width: 2rem; height: 2rem; font-size: 1rem; }
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
-  .archive {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  .gallery-exhibits { grid-template-columns: repeat(2, 1fr); }
 }
 
-/* extra wide: allow 4-column */
 @media (min-width: 1280px) {
-  .archive {
-    grid-template-columns: repeat(4, 1fr);
-  }
+  .gallery-exhibits { grid-template-columns: repeat(3, 1fr); }
 }
-
-/* staggered card reveal delays */
-.reveal:nth-child(1) { transition-delay: 0s; }
-.reveal:nth-child(2) { transition-delay: 0.05s; }
-.reveal:nth-child(3) { transition-delay: 0.1s; }
-.reveal:nth-child(4) { transition-delay: 0.15s; }
-.reveal:nth-child(5) { transition-delay: 0.2s; }
-.reveal:nth-child(6) { transition-delay: 0.25s; }
-.reveal:nth-child(7) { transition-delay: 0.3s; }
-.reveal:nth-child(8) { transition-delay: 0.35s; }
 </style>
 </head>
 <body>
 
+<div class="scroll-track"><div class="scroll-thumb" id="scrollThumb"></div></div>
+<div class="scroll-label" id="scrollLabel">Lobby</div>
+
 <nav>
-  <span class="nav-title">The Before Times</span>
-  <span class="nav-year">Est. ~300,000 BCE</span>
+  <span class="nav-title">The Human Archive</span>
+  <div class="nav-right">
+    <button class="nav-link" onclick="document.getElementById('submit').scrollIntoView({behavior:'smooth'})">Contribute</button>
+  </div>
 </nav>
 
+<!-- HERO -->
 <section class="hero">
-  <span class="hero-label">Archive</span>
-  <h1 class="hero-title">The Before Times</h1>
-  <p class="hero-subtitle">A digital museum of analog life</p>
+  <span class="hero-label">Est. 2026 &mdash; A Digital Museum</span>
+  <div class="hero-badge">The Analog Era &mdash; c. 300,000 BCE &ndash; 2022 CE</div>
+  <h1 class="hero-title">The Human<br>Archive</h1>
+  <p class="hero-subtitle">Preserving what we made before the machines learned to think</p>
+  <button class="hero-cta" onclick="document.querySelector('.gallery-room').scrollIntoView({behavior:'smooth'})">
+    Enter the Museum
+    <span>&#8595;</span>
+  </button>
   <div class="hero-scroll">
     <span>Browse the collection</span>
     <div class="hero-scroll-line"></div>
   </div>
 </section>
 
-<section class="manifesto">
+<!-- MANIFESTO -->
+<section class="manifesto reveal">
   <p>
-    Before the machines learned to think, humans made things with their hands. 
-    They wrote letters on paper, wound their watches, and got lost without asking for directions.
+    Before the machines learned to think, humans made things with their hands. They wrote letters on paper, wound their watches, and got lost without asking for directions.
   </p>
   <p>
-    This is an archive of what we almost lost. A curatorial act of remembering.
+    This is an archive of what we almost lost. A museum of artifacts from the analog era &mdash; each one carrying the weight of human intention, imperfection, and care.
   </p>
-  <p class="attribution">— Curatorial Statement, 2026</p>
+  <p>
+    We preserve these objects not because they are useful, but because they are evidence of who we were.
+  </p>
+  <p class="attribution">— Curatorial Statement</p>
 </section>
 
-<div class="divider">
-  <span class="divider-line"></span>
-  <span class="divider-dot"></span>
-  <span class="divider-line"></span>
-</div>
+<div class="divider"><span class="divider-line"></span><span class="divider-dot"></span><span class="divider-line"></span></div>
 
-<section class="archive-header">
-  <h2>Exhibits</h2>
-  <p>Selected artifacts from the pre-digital era, each carrying the weight of human intention.</p>
-</section>
+<!-- GALLERY ROOMS + EXHIBITS will be rendered by JS -->
+<div id="galleryContainer"></div>
 
-<section class="archive">
+<div class="divider"><span class="divider-line"></span><span class="divider-dot"></span><span class="divider-line"></span></div>
 
-  <article class="exhibit reveal">
-    <span class="exhibit-number">Exhibit No. 001</span>
-    <div class="exhibit-visual">
-      <div class="art-envelope">
-        <div class="stamp"></div>
-        <div class="address-line"></div>
-        <div class="address-line"></div>
-        <div class="address-line"></div>
-      </div>
-    </div>
-    <div class="exhibit-info">
-      <span class="exhibit-era">c. 2400 BCE — Present</span>
-      <h3 class="exhibit-title">Handwritten Letters</h3>
-      <p class="exhibit-desc">Correspondence carried across continents by ship, train, and foot. Each stroke of ink carried the weight of intention, the particular slant of a person's hand.</p>
-      <p class="exhibit-note">"A letter always arrives too early or too late." — Karl Kraus</p>
-    </div>
-  </article>
+<!-- SUBMISSION -->
+<section class="submit-section" id="submit">
+  <h2>Contribute to the Archive</h2>
+  <p class="submit-intro">
+    Do you have an analog artifact that should be preserved? Submit it for curatorial review. We accept submissions from anyone who holds a piece of human history.
+  </p>
 
-  <article class="exhibit reveal">
-    <span class="exhibit-number">Exhibit No. 002</span>
-    <div class="exhibit-visual">
-      <div class="art-cassette">
-        <div class="reel reel-l"><div class="reel-inner"></div></div>
-        <div class="reel reel-r"><div class="reel-inner"></div></div>
-        <div class="label-area"></div>
-        <div class="label-line"></div>
-        <div class="label-line"></div>
-        <div class="label-line"></div>
-      </div>
-    </div>
-    <div class="exhibit-info">
-      <span class="exhibit-era">1963 — 2000s</span>
-      <h3 class="exhibit-title">The Mixtape</h3>
-      <p class="exhibit-desc">A curated sequence of songs recorded onto magnetic tape. An act of love, a declaration of taste. The perfect playlist required patience, precision, and perfect timing on the pause button.</p>
-      <p class="exhibit-note">Each tape was a fingerprint of someone's emotional landscape.</p>
-    </div>
-  </article>
-
-  <article class="exhibit reveal">
-    <span class="exhibit-number">Exhibit No. 003</span>
-    <div class="exhibit-visual">
-      <div class="art-polaroid">
-        <div class="image"></div>
-      </div>
-    </div>
-    <div class="exhibit-info">
-      <span class="exhibit-era">1948 — Present</span>
-      <h3 class="exhibit-title">Polaroid Photographs</h3>
-      <p class="exhibit-desc">An image that developed before your eyes. Impermanent, imperfect, irreplaceable. You could shake it to make it dry faster, though that was always a myth.</p>
-      <p class="exhibit-note">No filters. No retakes. Just a single frame of captured light.</p>
-    </div>
-  </article>
-
-  <article class="exhibit reveal">
-    <span class="exhibit-number">Exhibit No. 004</span>
-    <div class="exhibit-visual">
-      <div class="art-recipe">
-        <div class="recipe-title-line"></div>
-        <div class="recipe-line"></div>
-        <div class="recipe-line"></div>
-        <div class="recipe-line"></div>
-        <div class="recipe-line"></div>
-        <div class="recipe-line"></div>
-        <div class="recipe-line"></div>
-        <div class="recipe-line"></div>
-      </div>
-    </div>
-    <div class="exhibit-info">
-      <span class="exhibit-era">Antiquity — Present</span>
-      <h3 class="exhibit-title">Recipe Cards</h3>
-      <p class="exhibit-desc">Handwritten on index cards, stained with butter and chocolate. Measurements were approximate, instructions assumed knowledge. The cook knew more than the recipe told.</p>
-      <p class="exhibit-note">"A pinch of this, a handful of that. You'll know when it's right."</p>
-    </div>
-  </article>
-
-  <article class="exhibit reveal">
-    <span class="exhibit-number">Exhibit No. 005</span>
-    <div class="exhibit-visual">
-      <div class="art-map">
-        <div class="route"></div>
-        <div class="route-dot"></div>
-        <div class="route-dot"></div>
-        <div class="compass"></div>
-      </div>
-    </div>
-    <div class="exhibit-info">
-      <span class="exhibit-era">Prehistory — 2010s</span>
-      <h3 class="exhibit-title">Paper Maps</h3>
-      <p class="exhibit-desc">Large sheets of folded paper that demanded you unfold your entire world to see where you were. You could draw on them, lose them, and discover places you never meant to find.</p>
-      <p class="exhibit-note">Getting lost was part of the journey. There was no recalculating.</p>
-    </div>
-  </article>
-
-  <article class="exhibit reveal">
-    <span class="exhibit-number">Exhibit No. 006</span>
-    <div class="exhibit-visual">
-      <div class="art-film">
-        <div class="sprocket">
-          <div class="sprocket-hole"></div>
-          <div class="sprocket-hole"></div>
-          <div class="sprocket-hole"></div>
-          <div class="sprocket-hole"></div>
-        </div>
-        <div class="frame"></div>
-        <div class="frame"></div>
-        <div class="frame"></div>
-        <div class="sprocket sprocket-r">
-          <div class="sprocket-hole"></div>
-          <div class="sprocket-hole"></div>
-          <div class="sprocket-hole"></div>
-          <div class="sprocket-hole"></div>
-        </div>
-      </div>
-    </div>
-    <div class="exhibit-info">
-      <span class="exhibit-era">1888 — 2010s</span>
-      <h3 class="exhibit-title">Film Photography</h3>
-      <p class="exhibit-desc">Twenty-four or thirty-six frames per roll. Every click cost money and counted. You composed carefully, waited for the light, and hoped the lab got it right.</p>
-      <p class="exhibit-note">The anticipation of the developed roll is a lost form of suspense.</p>
-    </div>
-  </article>
-
-  <article class="exhibit reveal">
-    <span class="exhibit-number">Exhibit No. 007</span>
-    <div class="exhibit-visual">
-      <div class="art-diary">
-        <div class="spine"></div>
-        <div class="pages"></div>
-        <div class="lock"></div>
-      </div>
-    </div>
-    <div class="exhibit-info">
-      <span class="exhibit-era">c. 600 CE — Present</span>
-      <h3 class="exhibit-title">The Private Diary</h3>
-      <p class="exhibit-desc">Pages filled with uncensored thought, sealed with a tiny lock. The only reader was supposed to be yourself. A conversation with no audience but time.</p>
-      <p class="exhibit-note">"The diary is the only place where you can speak the truth." — Anais Nin</p>
-    </div>
-  </article>
-
-  <article class="exhibit reveal">
-    <span class="exhibit-number">Exhibit No. 008</span>
-    <div class="exhibit-visual">
-      <div class="art-ticket">
-        <div class="tear"></div>
-        <div class="ticket-text">
-          <strong>LIVE</strong><br>
-          SECTION &bull; ROW &bull; SEAT<br>
-          ADMIT ONE<br>
-          <span style="font-size:0.4rem">NO REFUNDS &bull; NO EXCHANGES</span>
-        </div>
-      </div>
-    </div>
-    <div class="exhibit-info">
-      <span class="exhibit-era">c. 1700s — 2020s</span>
-      <h3 class="exhibit-title">Concert Tickets</h3>
-      <p class="exhibit-desc">A physical proof that you were there. Often saved in shoeboxes, tucked into mirrors, or pinned to corkboards. The fading ink was evidence of a memory well kept.</p>
-      <p class="exhibit-note">You kept the stub. The digital ticket disappeared.</p>
-    </div>
-  </article>
-
-</section>
-
-<div class="divider">
-  <span class="divider-line"></span>
-  <span class="divider-dot"></span>
-  <span class="divider-line"></span>
-</div>
-
-<section class="featured">
-  <div class="featured-header">
-    <h2>Featured Exhibit</h2>
-    <p>A deeper look at one artifact from the collection.</p>
+  <div class="submit-success" id="submitSuccess">
+    <div class="submit-success-icon">&#10003;</div>
+    <h3>Submission received</h3>
+    <p>Your artifact has been submitted for curatorial review. If selected, it will be added to the permanent collection. Thank you for helping us remember.</p>
   </div>
 
-  <div class="featured-card reveal">
-    <div class="featured-visual">
-      <div class="art-loveletter">
-        <div class="seal"></div>
-        <div class="ink-line"></div>
-        <div class="ink-line"></div>
-        <div class="ink-line"></div>
-        <div class="ink-line"></div>
-        <div class="ink-line"></div>
+  <form class="submit-form" id="submitForm">
+    <div class="form-group full-width">
+      <label class="form-label" for="artName">Artifact Name <span class="required">*</span></label>
+      <input class="form-input" type="text" id="artName" required placeholder="e.g., Grandmother's Recipe Box">
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="artCategory">Category</label>
+      <select class="form-select" id="artCategory">
+        <option value="">Select a category</option>
+        <option value="correspondence">Correspondence</option>
+        <option value="photography">Photography</option>
+        <option value="music">Music & Sound</option>
+        <option value="kitchen">Kitchen & Domestic</option>
+        <option value="maps">Maps & Navigation</option>
+        <option value="personal">Personal & Private</option>
+        <option value="collections">Collections & Ephemera</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="artEra">Approximate Era</label>
+      <input class="form-input" type="text" id="artEra" placeholder="e.g., 1970s">
+    </div>
+    <div class="form-group full-width">
+      <label class="form-label" for="artStory">Your Story <span class="required">*</span></label>
+      <textarea class="form-textarea" id="artStory" required placeholder="Tell us about this artifact. Where did it come from? What does it mean? Why should it be preserved?"></textarea>
+    </div>
+    <div class="form-group full-width">
+      <label class="form-label" for="artWhy">Why does this artifact matter?</label>
+      <textarea class="form-textarea" id="artWhy" placeholder="What makes this piece of analog life worth remembering?"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="artName">Your Name</label>
+      <input class="form-input" type="text" id="subName" placeholder="Anonymous">
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="artEmail">Email (for follow-up)</label>
+      <input class="form-input" type="email" id="subEmail" placeholder="optional">
+    </div>
+    <div class="form-group full-width">
+      <label class="form-label">Upload Image</label>
+      <div class="form-file-wrapper">
+        <input class="form-file-input" type="file" id="artImage" accept="image/*">
+        <div class="form-file-label">
+          <span class="form-file-icon">&#128206;</span>
+          <span id="fileLabel">Attach a photograph of the artifact</span>
+        </div>
       </div>
     </div>
-    <div class="featured-content">
-      <span class="exhibit-era">c. 1700 BCE — 2000s</span>
-      <h3 class="exhibit-title">Love Letters</h3>
-      <p class="exhibit-desc">
-        Before texting, before DMs, before swiping right, there was the love letter. 
-        Written on aerogrammes, hidden in desks, pressed between books. 
-        The writer chose every word knowing it could not be unsent.
-      </p>
-      <p class="exhibit-desc">
-        Letters took days or weeks to arrive. Absence was measured in mail deliveries, 
-        not notification badges. The weight of paper carried the weight of feeling.
-      </p>
-      <p class="exhibit-note">
-        "I wrote to you every day for a year. You kept every one."
-      </p>
-    </div>
-  </div>
+    <button class="form-submit" type="submit">Submit for Archiving</button>
+  </form>
 </section>
 
+<!-- FOOTER -->
 <footer>
   <p>What else will we forget to remember?</p>
-  <span class="footer-mono">The Before Times &mdash; A Digital Archive of Analog Life &mdash; Est. 2026</span>
+  <span class="footer-mono">The Human Archive &mdash; A Digital Museum of Analog Life &mdash; Est. 2026</span>
 </footer>
 
+<!-- MODAL OVERLAY -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalContent">
+    <button class="modal-close" id="modalClose">&#10005;</button>
+    <div class="modal-image" id="modalImage">
+      <div class="modal-image-grain"></div>
+      <span class="modal-prompt-label">Image Prompt</span>
+      <p class="modal-prompt" id="modalPrompt"></p>
+      <p class="modal-dimensions" id="modalDims"></p>
+    </div>
+    <div class="modal-body">
+      <div class="modal-header">
+        <p class="modal-era" id="modalEra"></p>
+        <h2 class="modal-title" id="modalTitle"></h2>
+        <div class="modal-tags" id="modalTags"></div>
+      </div>
+      <div class="modal-description" id="modalDesc"></div>
+      <div class="modal-meta" id="modalMeta"></div>
+      <div class="modal-curator">
+        <p class="modal-curator-label">Curator's Note</p>
+        <p class="modal-curator-note" id="modalCurator"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
+// DATA
+const galleries = [
+  {
+    num: 'I', name: 'The Correspondence Room',
+    desc: 'Words carried across distances by hand and heart. Before instant messaging, there was ink, paper, and the long wait for a reply.',
+    exhibits: [
+      {
+        id: 1, title: 'Handwritten Letters',
+        era: 'c. 2400 BCE &mdash; Present',
+        category: 'Correspondence', tags: ['Paper', 'Ink', 'Wax Seal'],
+        desc: 'Correspondence carried across continents by ship, train, and foot. Each stroke of ink carried the weight of intention, the particular slant of a person\'s hand.',
+        fullDesc: [
+          'Before email, before SMS, there was the letter. You sat down with a blank sheet, a pen, and the full weight of what you wanted to say. There was no delete key, no undo. Every word was chosen with care because every word cost something &mdash; paper, postage, time.',
+          'Letters crossed oceans on ships, traveled weeks overland by rail, and arrived smelling of distant places. The handwriting told you everything: the hurry, the hesitation, the tear that smudged the ink.'
+        ],
+        curatorNote: 'A letter always arrives too early or too late. But when it arrives, it arrives as a physical piece of someone, folded into an envelope.',
+        materials: 'Paper, iron gall ink, wax seal', origin: 'Universal', dimensions: 'Variable',
+        artClass: 'art-envelope',
+        prompt: 'A still-life arrangement of vintage handwritten letters on aged paper, elegant cursive script visible through translucent sheets, wax seal impressions in deep red, warm natural window light, shallow depth of field, tilted angles, shot on medium format film',
+        promptRatio: '16:10'
+      },
+      {
+        id: 2, title: 'Love Letters',
+        era: 'c. 1700 BCE &mdash; 2000s',
+        category: 'Correspondence', tags: ['Romance', 'Paper', 'Seal'],
+        desc: 'Written on aerogrammes, hidden in desks, pressed between books. Every word was chosen knowing it could not be unsent.',
+        fullDesc: [
+          'The love letter is perhaps the most human of all artifacts. It requires vulnerability, patience, and the willingness to commit feeling to paper with no guarantee of return.',
+          'Letters took days or weeks to arrive. Absence was measured in mail deliveries, not notification badges. The weight of paper carried the weight of feeling.'
+        ],
+        curatorNote: 'I wrote to you every day for a year. You kept every one.',
+        materials: 'Paper, ink, sealing wax, ribbon', origin: 'Universal', dimensions: 'Variable',
+        artClass: 'art-heart',
+        prompt: 'An open vintage love letter on cream paper, elegant flowing handwriting, a pressed dried flower resting on the page, wax seal in burgundy, soft golden hour light streaming diagonally across the paper, romantic mood, shallow depth of field, cinematic composition',
+        promptRatio: '16:10'
+      },
+      {
+        id: 3, title: 'Postcards from Afar',
+        era: 'c. 1869 &mdash; Present',
+        category: 'Correspondence', tags: ['Travel', 'Postage', 'Ephemera'],
+        desc: 'A brief message from somewhere far away. Limited space meant every word counted. Wish you were here.',
+        fullDesc: [
+          'Postcards were the tweet of their era &mdash; short, public, and designed to make the recipient envious. The picture side showed a place they had never been; the message side said just enough to make them wish they were there.',
+          'Collected in shoeboxes and albums, postcards are a cartography of human connection, mapping who knew whom and where they went.'
+        ],
+        curatorNote: 'The postcard is a promise: I am somewhere you are not, and I am thinking of you.',
+        materials: 'Cardstock, ink, postage stamp', origin: 'Universal', dimensions: '14 x 9 cm (standard)',
+        artClass: 'art-envelope',
+        prompt: 'A scattered collection of vintage postcards from different eras, each showing a different travel destination, handwritten messages visible on the backs, stamps with cancellation marks, warm afternoon light on a wooden table, nostalgic editorial still life',
+        promptRatio: '16:10'
+      }
+    ]
+  },
+  {
+    num: 'II', name: 'The Memory Chamber',
+    desc: 'Light captured and preserved. Before infinite storage, every photograph was a choice, a risk, a moment that could not be retaken.',
+    exhibits: [
+      {
+        id: 4, title: 'Polaroid Photographs',
+        era: '1948 &mdash; Present',
+        category: 'Photography', tags: ['Instant', 'Analog', 'SX-70'],
+        desc: 'An image that developed before your eyes. Impermanent, imperfect, irreplaceable. You could shake it to make it dry faster, though that was always a myth.',
+        fullDesc: [
+          'There was a white border around every memory. You watched the image bloom from gray nothingness, waiting for the chemicals to settle. No zoom, no review, no delete.',
+          'Each Polaroid was unique. If you wanted a copy, you took another picture. The margins held thumbprints, date stamps, and the gentle fading of time.'
+        ],
+        curatorNote: 'No filters. No retakes. Just a single frame of captured light.',
+        materials: 'Instant film, plastic casing, chemical emulsion', origin: 'Cambridge, Massachusetts', dimensions: '10.8 x 8.8 cm',
+        artClass: 'art-polaroid',
+        prompt: 'Vintage Polaroid photographs spread on a wooden surface, white borders visible, some slightly faded with age, warm sun-bleached tones, a mix of portraits and landscapes, soft shadows, editorial still life with nostalgic summer feeling, shot on film with natural grain',
+        promptRatio: '4:5'
+      },
+      {
+        id: 5, title: 'Film Photography',
+        era: '1888 &mdash; 2010s',
+        category: 'Photography', tags: ['35mm', 'Analog', 'Darkroom'],
+        desc: 'Twenty-four or thirty-six frames per roll. Every click cost money and counted. You composed carefully and waited for the light.',
+        fullDesc: [
+          'The anticipation of the developed roll is a lost form of suspense. You shot a whole roll, dropped it at the lab, and waited a week. When you opened the envelope, every frame was a surprise.',
+          'Some were overexposed, some were blurry, some were accidental masterpieces. The failures cost you just as much as the successes.'
+        ],
+        curatorNote: 'The anticipation of the developed roll is a lost form of suspense.',
+        materials: 'Celluloid film strip, silver halide emulsion', origin: 'Rochester, New York', dimensions: '35mm x 36 frames',
+        artClass: 'art-film',
+        prompt: 'A strip of developed 35mm film negatives held up to window light, sprocket holes visible, frames showing candid street photography scenes, grainy texture, warm sunlight passing through the translucent film, cinematic macro shot, nostalgic analog mood',
+        promptRatio: '16:10'
+      },
+      {
+        id: 6, title: 'The Family Album',
+        era: 'c. 1850 &mdash; 2010s',
+        category: 'Photography', tags: ['Family', 'Memory', 'Archive'],
+        desc: 'Leather-bound books of printed photographs. The original social feed, curated by someone\'s mother, annotated in white pen.',
+        fullDesc: [
+          'Every family had one. A heavy book on a bottom shelf, filled with plastic sleeves and the collective memory of birthdays, holidays, and awkward haircuts.',
+          'You sat on the couch and flipped through it with someone who pointed and said, "That was the summer we..." The spine was cracked, the photos sticky, and every page smelled like nostalgia.'
+        ],
+        curatorNote: 'The family album is our first encounter with the concept of an archive.',
+        materials: 'Leather, cardstock, photographic paper', origin: 'Every home', dimensions: '30 x 25 cm (typical)',
+        artClass: 'art-polaroid',
+        prompt: 'An open vintage family photo album with clear plastic sleeves, filled with faded color photographs from the 1970s, leather binding worn at the edges, warm nostalgic lighting, candid snapshots visible, shot from above on a wooden coffee table, cozy documentary style',
+        promptRatio: '16:10'
+      }
+    ]
+  },
+  {
+    num: 'III', name: 'The Music Lounge',
+    desc: 'Sound made physical. Before streaming, music was something you held in your hands, read the liner notes, and cared for like a living thing.',
+    exhibits: [
+      {
+        id: 7, title: 'The Mixtape',
+        era: '1963 &mdash; 2000s',
+        category: 'Music', tags: ['Cassette', 'Curation', 'Analog'],
+        desc: 'A curated sequence of songs recorded onto magnetic tape. An act of love, a declaration of taste.',
+        fullDesc: [
+          'Making a mixtape was a craft. You timed the gaps between songs, adjusted the recording levels, and prayed the DJ didn\'t talk over the intro. The best ones had handwritten covers folded from album art.',
+          'A mixtape told someone how you felt about them without saying a word. The song order was a narrative. The inclusion of a B-side was a message.'
+        ],
+        curatorNote: 'Each tape was a fingerprint of someone\'s emotional landscape.',
+        materials: 'Magnetic tape, plastic shell, paper label', origin: 'Eindhoven, Netherlands', dimensions: '10 x 6.5 cm',
+        artClass: 'art-cassette',
+        prompt: 'A close-up of vintage cassette tapes with handwritten labels, magnetic tape visible through the transparent shell, soft warm lighting, nostalgic 80s color palette of warm browns and faded oranges, arranged on a wooden surface, editorial still life with shallow depth of field',
+        promptRatio: '16:10'
+      },
+      {
+        id: 8, title: 'Vinyl Records',
+        era: '1948 &mdash; Present',
+        category: 'Music', tags: ['Vinyl', 'Analog', 'Audiophile'],
+        desc: 'Twelve inches of grooved vinyl. The ritual of placing the needle, the pop and crackle before the music began.',
+        fullDesc: [
+          'An album was an event. You took it out of the sleeve carefully, holding it by the edges. You cleaned it with a special brush. You lowered the tonearm with reverence.',
+          'Albums came with liner notes you actually read, artwork you actually looked at, and a sequence of songs designed to be heard in order. There was no shuffle.'
+        ],
+        curatorNote: 'The pop and crackle before the first note was the sound of anticipation.',
+        materials: 'Vinyl, cardboard sleeve, inner sleeve', origin: 'Universal', dimensions: '30.5 cm diameter',
+        artClass: 'art-vinyl',
+        prompt: 'A vinyl record on a vintage turntable, dust visible on the grooves, warm amber light from a nearby lamp, record sleeve with retro album art leaning in background, cozy late-night listening mood, filmic color grading with deep blacks and warm highlights',
+        promptRatio: '1:1'
+      }
+    ]
+  },
+  {
+    num: 'IV', name: 'The Kitchen Archive',
+    desc: 'Recipes handwritten on index cards, stained with butter and chocolate. Cooking was memory passed down through splattered pages.',
+    exhibits: [
+      {
+        id: 9, title: 'Recipe Cards',
+        era: 'Antiquity &mdash; Present',
+        category: 'Domestic', tags: ['Cooking', 'Handwriting', 'Heirloom'],
+        desc: 'Handwritten on index cards, stained with butter and chocolate. Measurements were approximate, instructions assumed knowledge.',
+        fullDesc: [
+          'The best recipes were never written down completely. "A pinch of this, a handful of that. You\'ll know when it\'s right." The cook knew more than the recipe told.',
+          'These cards passed through generations in recipe boxes. The stains were evidence of use. The faded ink was proof of love.'
+        ],
+        curatorNote: '"A pinch of this, a handful of that. You\'ll know when it\'s right."',
+        materials: 'Cardstock, ink, food stains', origin: 'Every kitchen', dimensions: '12.5 x 7.5 cm',
+        artClass: 'art-recipe',
+        prompt: 'A collection of handwritten recipe cards on a flour-dusted wooden counter, cursive script with ingredient lists, kitchen window light casting soft shadows, a sprig of herbs nearby, warm domestic mood, editorial still life with vintage warmth and texture',
+        promptRatio: '4:5'
+      }
+    ]
+  },
+  {
+    num: 'V', name: 'The Cartography Hall',
+    desc: 'Before GPS, you navigated by paper, memory, and the kindness of strangers. Getting lost was part of the journey.',
+    exhibits: [
+      {
+        id: 10, title: 'Paper Maps',
+        era: 'Prehistory &mdash; 2010s',
+        category: 'Navigation', tags: ['Cartography', 'Travel', 'Analog'],
+        desc: 'Large sheets of folded paper that demanded you unfold your entire world to see where you were going.',
+        fullDesc: [
+          'A paper map was a commitment. You unfolded it in the middle of a street, turning it in your hands, trying to align the north arrow with the actual north. Someone always had to pull over.',
+          'You could draw on maps, highlight routes, and mark places you had been. They wore out at the folds, tore at the corners, and became relics of journeys taken.'
+        ],
+        curatorNote: 'Getting lost was part of the journey. There was no recalculating.',
+        materials: 'Paper, ink, laminate', origin: 'Universal', dimensions: '100 x 70 cm (unfolded)',
+        artClass: 'art-map',
+        prompt: 'A folded vintage road map spread open on a car hood, hand-drawn route marked in red pen, creases and wear visible, warm golden hour lighting, dashboard visible in background, nostalgic road trip mood, cinematic documentary style',
+        promptRatio: '16:10'
+      }
+    ]
+  },
+  {
+    num: 'VI', name: 'The Personal Vault',
+    desc: 'The things we kept hidden, sealed, and wrote only for ourselves. No audience but time.',
+    exhibits: [
+      {
+        id: 11, title: 'The Private Diary',
+        era: 'c. 600 CE &mdash; Present',
+        category: 'Personal', tags: ['Writing', 'Privacy', 'Reflection'],
+        desc: 'Pages filled with uncensored thought, sealed with a tiny lock. The only reader was supposed to be yourself.',
+        fullDesc: [
+          'A diary was a conversation with no audience but yourself. You wrote what you could not say, confessed what you could not admit, and recorded the mundane details that would later become the texture of a vanished life.',
+          'The lock was symbolic. Anyone determined enough could break it. But the act of locking was the act of declaring this is mine and mine alone.'
+        ],
+        curatorNote: 'The diary is the only place where you can speak the truth. &mdash; Anais Nin',
+        materials: 'Paper, board, metal lock', origin: 'Universal', dimensions: 'Variable',
+        artClass: 'art-diary',
+        prompt: 'An open vintage diary on a wooden desk, handwritten pages with ink, a small brass key resting nearby, soft window light illuminating the pages, intimate and private atmosphere, muted earth tones, shallow depth of field, editorial still life',
+        promptRatio: '4:5'
+      }
+    ]
+  },
+  {
+    num: 'VII', name: 'The Collectors\' Corner',
+    desc: 'The things we kept just because. Ticket stubs, stamps, ephemera that meant nothing to anyone but us.',
+    exhibits: [
+      {
+        id: 12, title: 'Concert Tickets',
+        era: 'c. 1700s &mdash; 2020s',
+        category: 'Collections', tags: ['Music', 'Ephemera', 'Memory'],
+        desc: 'A physical proof that you were there. Often saved in shoeboxes, tucked into mirrors, or pinned to corkboards.',
+        fullDesc: [
+          'The ticket stub was a souvenir of a night that mattered. The fading ink, the torn perforation, the crumpled edge from being clutched in a sweaty hand all night.',
+          'You kept them in shoeboxes, in wallets, behind the plastic sleeve of your favorite album. Each one triggered a memory: who you were with, what the air felt like, the song they opened with.'
+        ],
+        curatorNote: 'You kept the stub. The digital ticket just disappears.',
+        materials: 'Cardstock, thermal ink, perforated paper', origin: 'Universal', dimensions: 'Variable',
+        artClass: 'art-ticket',
+        prompt: 'A collection of vintage concert ticket stubs from different decades, torn perforations visible, faded printing, arranged on a worn corkboard with pushpins, warm nostalgic lighting, documentary style, shallow depth of field with one stub in sharp focus',
+        promptRatio: '16:10'
+      },
+      {
+        id: 13, title: 'Stamp Collections',
+        era: '1840 &mdash; Present',
+        category: 'Collections', tags: ['Postage', 'Philately', 'Ephemera'],
+        desc: 'Small rectangles of adhesive paper that carried letters across the world. Collected for their beauty, history, and tiny perfection.',
+        fullDesc: [
+          'Stamp collecting was called the "king of hobbies and the hobby of kings." Each stamp was a miniature work of art, a piece of a country\'s pride, a record of history in miniature.',
+          'Arranged in albums with hinged mounts, stamps taught geography, history, and design. The rarest ones were worth fortunes; the most cherished ones were often the simplest.'
+        ],
+        curatorNote: 'Every stamp tells a story. You just have to know where to look.',
+        materials: 'Paper, adhesive, perforated edges', origin: 'Universal', dimensions: 'Variable (2-5 cm)',
+        artClass: 'art-stamp',
+        prompt: 'A vintage stamp collection album open to a page, colorful stamps from different countries arranged in rows, magnifying glass resting nearby, warm library lighting, detailed macro view showing perforations and postmarks, nostalgic collector aesthetic',
+        promptRatio: '16:10'
+      }
+    ]
+  }
+];
+
+// RENDER GALLERIES
+const container = document.getElementById('galleryContainer');
+
+galleries.forEach(gallery => {
+  const room = document.createElement('section');
+  room.className = 'gallery-room reveal';
+  room.innerHTML = `
+    <div class="gallery-room-inner">
+      <span class="gallery-number">${gallery.num}</span>
+      <div class="gallery-info">
+        <p class="gallery-label">Gallery</p>
+        <h2 class="gallery-name">${gallery.name}</h2>
+        <p class="gallery-desc">${gallery.desc}</p>
+      </div>
+    </div>
+  `;
+  container.appendChild(room);
+
+  const grid = document.createElement('div');
+  grid.className = 'gallery-exhibits';
+
+  gallery.exhibits.forEach(exhibit => {
+    const card = document.createElement('article');
+    card.className = 'exhibit reveal';
+    card.dataset.id = exhibit.id;
+
+    const visualHTML = renderArt(exhibit.artClass);
+
+    card.innerHTML = `
+      <div class="exhibit-visual">
+        ${visualHTML}
+        <span class="prompt-badge">${exhibit.promptRatio}</span>
+      </div>
+      <div class="exhibit-body">
+        <span class="exhibit-era">${exhibit.era}</span>
+        <h3 class="exhibit-title">${exhibit.title}</h3>
+        <p class="exhibit-desc">${exhibit.desc}</p>
+        <div class="exhibit-tags">
+          ${exhibit.tags.map(t => `<span class="exhibit-tag">${t}</span>`).join('')}
+        </div>
+      </div>
+    `;
+
+    card.addEventListener('click', () => openModal(exhibit));
+    grid.appendChild(card);
+  });
+
+  container.appendChild(grid);
+});
+
+function renderArt(artClass) {
+  switch(artClass) {
+    case 'art-envelope':
+      return `<div class="art-envelope"><div class="stamp"></div><div class="addr"></div><div class="addr"></div><div class="addr"></div></div>`;
+    case 'art-heart':
+      return `<div class="art-heart"><div class="h-shape"></div><div class="h-text">&hearts;</div></div>`;
+    case 'art-cassette':
+      return `<div class="art-cassette"><div class="reel reel-l"><div class="reel-inner"></div></div><div class="reel reel-r"><div class="reel-inner"></div></div><div class="label-bg"></div><div class="ll"></div><div class="ll"></div><div class="ll"></div></div>`;
+    case 'art-polaroid':
+      return `<div class="art-polaroid"><div class="polaroid-img"></div></div>`;
+    case 'art-recipe':
+      return `<div class="art-recipe"><div class="r-line"></div><div class="r-line"></div><div class="r-line"></div><div class="r-line"></div><div class="r-line"></div><div class="r-line"></div><div class="r-line"></div></div>`;
+    case 'art-map':
+      return `<div class="art-map"><div class="m-route"></div><div class="m-dot"></div><div class="m-dot"></div><div class="m-compass"></div></div>`;
+    case 'art-film':
+      return `<div class="art-film"><div class="f-sprocket f-sprocket-l"><div class="f-hole"></div><div class="f-hole"></div><div class="f-hole"></div><div class="f-hole"></div></div><div class="f-frame"></div><div class="f-frame"></div><div class="f-frame"></div><div class="f-sprocket f-sprocket-r"><div class="f-hole"></div><div class="f-hole"></div><div class="f-hole"></div><div class="f-hole"></div></div></div>`;
+    case 'art-vinyl':
+      return `<div class="art-vinyl"><div class="v-label"></div><div class="v-hole"></div><div class="v-groove"></div><div class="v-groove"></div><div class="v-groove"></div><div class="v-groove"></div></div>`;
+    case 'art-diary':
+      return `<div class="art-diary"><div class="d-spine"></div><div class="d-pages"></div><div class="d-lock"></div></div>`;
+    case 'art-ticket':
+      return `<div class="art-ticket"><div class="t-tear"></div><div class="t-text"><strong>LIVE</strong><br>SECTION &bull; ROW &bull; SEAT<br>ADMIT ONE<br><span style="font-size:0.4rem">NO REFUNDS</span></div></div>`;
+    case 'art-stamp':
+      return `<div class="art-stamp"><div class="s-item"><div class="s-fill"></div></div><div class="s-item"><div class="s-fill"></div></div><div class="s-item"><div class="s-fill"></div></div></div>`;
+    default:
+      return `<div class="art-envelope"><div class="stamp"></div><div class="addr"></div><div class="addr"></div><div class="addr"></div></div>`;
+  }
+}
+
+// MODAL
+const overlay = document.getElementById('modalOverlay');
+const content = document.getElementById('modalContent');
+
+function openModal(exhibit) {
+  document.getElementById('modalEra').innerHTML = exhibit.era;
+  document.getElementById('modalTitle').textContent = exhibit.title;
+  document.getElementById('modalTags').innerHTML = exhibit.tags.map(t => `<span class="modal-tag">${t}</span>`).join('');
+  document.getElementById('modalDesc').innerHTML = exhibit.fullDesc.map(p => `<p>${p}</p>`).join('');
+  document.getElementById('modalCurator').textContent = exhibit.curatorNote;
+  document.getElementById('modalPrompt').textContent = exhibit.prompt;
+  document.getElementById('modalDims').textContent = `Recommended: ${exhibit.promptRatio} | ${exhibit.dimensions}`;
+  document.getElementById('modalMeta').innerHTML = `
+    <div class="modal-meta-item"><p class="modal-meta-label">Materials</p><p class="modal-meta-value">${exhibit.materials}</p></div>
+    <div class="modal-meta-item"><p class="modal-meta-label">Origin</p><p class="modal-meta-value">${exhibit.origin}</p></div>
+    <div class="modal-meta-item"><p class="modal-meta-label">Category</p><p class="modal-meta-value">${exhibit.category}</p></div>
+  `;
+  overlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  overlay.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('modalClose').addEventListener('click', closeModal);
+overlay.addEventListener('click', (e) => {
+  if (e.target === overlay) closeModal();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeModal();
+});
+
+// SCROLL PROGRESS + LABEL
+const thumb = document.getElementById('scrollThumb');
+const label = document.getElementById('scrollLabel');
+const sections = [];
+document.querySelectorAll('.gallery-room').forEach(el => sections.push(el));
+
+function updateScroll() {
+  const scrollY = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = docHeight > 0 ? scrollY / docHeight : 0;
+  const maxTop = 160;
+  thumb.style.top = (progress * maxTop) + 'px';
+
+  let currentLabel = 'Lobby';
+  sections.forEach(section => {
+    const rect = section.getBoundingClientRect();
+    if (rect.top < window.innerHeight * 0.5) {
+      const name = section.querySelector('.gallery-name');
+      if (name) currentLabel = name.textContent;
+    }
+  });
+  if (scrollY + window.innerHeight >= document.documentElement.scrollHeight - 50) {
+    currentLabel = 'Archive';
+  }
+  label.textContent = currentLabel;
+  if (scrollY > 200) { label.classList.add('visible'); }
+  else { label.classList.remove('visible'); }
+}
+
+window.addEventListener('scroll', updateScroll);
+updateScroll();
+
+// SCROLL REVEAL
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
       entry.target.classList.add('visible');
     }
   });
-}, {
-  threshold: 0.15,
-  rootMargin: '0px 0px -40px 0px'
-});
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-</script>
 
+// SUBMIT FORM
+const form = document.getElementById('submitForm');
+const success = document.getElementById('submitSuccess');
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const name = document.getElementById('artName').value.trim();
+  const story = document.getElementById('artStory').value.trim();
+  if (!name || !story) return;
+
+  const submission = {
+    name,
+    category: document.getElementById('artCategory').value,
+    era: document.getElementById('artEra').value,
+    story,
+    why: document.getElementById('artWhy').value,
+    submitter: document.getElementById('subName').value || 'Anonymous',
+    email: document.getElementById('subEmail').value,
+    date: new Date().toISOString()
+  };
+
+  const existing = JSON.parse(localStorage.getItem('humanArchiveSubmissions') || '[]');
+  existing.push(submission);
+  localStorage.setItem('humanArchiveSubmissions', JSON.stringify(existing));
+
+  form.reset();
+  form.style.display = 'none';
+  success.classList.add('visible');
+  document.getElementById('fileLabel').textContent = 'Attach a photograph of the artifact';
+});
+
+// File input label
+document.getElementById('artImage').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  document.getElementById('fileLabel').textContent = file ? file.name : 'Attach a photograph of the artifact';
+});
+</script>
 </body>
 </html>
