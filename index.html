@@ -20,7 +20,6 @@
   --accent-light: #c4957a;
   --accent-deep: #7a553f;
   --sage: #7d8a6e;
-  --sage-light: #a8b59a;
   --gold: #c4a268;
   --gold-light: #d4b888;
   --border: #d6cbbf;
@@ -96,6 +95,36 @@ nav {
 }
 .nav-link:hover { color: var(--accent); }
 
+/* gallery indicator */
+.gallery-indicator {
+  position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+  z-index: 150;
+  display: flex; align-items: center; gap: 1.5rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 0.6rem 1.25rem;
+  opacity: 0; visibility: hidden;
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: 0 4px 24px var(--shadow-strong);
+}
+.gallery-indicator.visible { opacity: 1; visibility: visible; }
+.gi-arrow {
+  font-family: var(--font-sans); font-size: 1rem;
+  color: var(--text-muted); cursor: pointer;
+  background: none; border: none;
+  padding: 0.25rem;
+  transition: color 0.3s;
+}
+.gi-arrow:hover { color: var(--accent); }
+.gi-arrow:disabled { opacity: 0.15; cursor: default; }
+.gi-label {
+  font-family: var(--font-mono); font-size: 0.6rem;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.gi-label span { color: var(--text-rich); }
+
 /* hero */
 .hero {
   min-height: 100vh;
@@ -161,10 +190,72 @@ nav {
   font-style: normal; margin-top: 1.5rem; letter-spacing: 0.05em;
 }
 
+/* lobby */
+.lobby {
+  max-width: 1280px; margin: 0 auto; padding: 5rem 2rem;
+}
+.lobby-header {
+  text-align: center; margin-bottom: 3.5rem;
+}
+.lobby-header h2 {
+  font-family: var(--font-serif); font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 400; margin-bottom: 0.5rem;
+}
+.lobby-header p {
+  color: var(--text-muted); font-size: 0.9rem; max-width: 500px; margin: 0 auto;
+}
+.lobby-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.25rem;
+}
+.lobby-card {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  padding: 2rem;
+  cursor: pointer;
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+  display: flex; flex-direction: column;
+}
+.lobby-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px var(--shadow);
+}
+.lobby-card:active { transform: translateY(-1px); }
+.lc-number {
+  font-family: var(--font-serif); font-size: 3rem;
+  color: var(--text-faint); line-height: 1; margin-bottom: 0.75rem;
+  opacity: 0.4;
+}
+.lc-label {
+  font-family: var(--font-mono); font-size: 0.55rem;
+  text-transform: uppercase; letter-spacing: 0.25em;
+  color: var(--text-muted); margin-bottom: 0.35rem;
+}
+.lc-name {
+  font-family: var(--font-serif); font-size: 1.3rem;
+  font-weight: 400; margin-bottom: 0.5rem;
+  color: var(--text-rich);
+}
+.lc-desc {
+  font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;
+  margin-bottom: 1.25rem; flex: 1;
+}
+.lc-enter {
+  font-family: var(--font-mono); font-size: 0.6rem;
+  text-transform: uppercase; letter-spacing: 0.15em;
+  color: var(--accent);
+  display: flex; align-items: center; gap: 0.5rem;
+  transition: gap 0.3s;
+}
+.lobby-card:hover .lc-enter { gap: 0.75rem; }
+
 /* gallery room label */
 .gallery-room {
   padding: 6rem 2rem 2rem;
   max-width: 1280px; margin: 0 auto;
+  scroll-margin-top: 5rem;
 }
 .gallery-room-inner {
   display: flex; align-items: flex-start; gap: 2rem;
@@ -207,26 +298,27 @@ nav {
   position: relative;
   overflow: hidden;
 }
-.exhibit::after {
-  content: ''; position: absolute; inset: 0;
-  pointer-events: none;
-  transition: opacity 0.5s;
-  opacity: 0;
-}
 .exhibit:hover {
   transform: translateY(-4px);
   box-shadow: 0 16px 48px var(--shadow);
 }
-.exhibit:hover::after { opacity: 1; }
 .exhibit:active { transform: translateY(-1px); }
 
 .exhibit-visual {
   width: 100%; aspect-ratio: 16 / 10;
-  display: flex; align-items: center; justify-content: center;
   position: relative; overflow: hidden;
   background: var(--paper-dark);
 }
-.exhibit-visual .prompt-badge {
+.exhibit-visual img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.exhibit:hover .exhibit-visual img {
+  transform: scale(1.05);
+}
+.exhibit-visual .media-badge {
   position: absolute; bottom: 0.5rem; right: 0.5rem;
   font-family: var(--font-mono); font-size: 0.5rem;
   text-transform: uppercase; letter-spacing: 0.1em;
@@ -235,7 +327,6 @@ nav {
   border: 1px solid var(--border);
   pointer-events: none;
 }
-
 .exhibit-body { padding: 1.25rem 1.25rem 1.25rem; flex: 1; display: flex; flex-direction: column; }
 .exhibit-era {
   font-family: var(--font-mono); font-size: 0.6rem;
@@ -261,97 +352,6 @@ nav {
   border: 1px solid var(--border);
   color: var(--text-muted);
 }
-
-/* CSS art for cards */
-.art-envelope { width: 55%; aspect-ratio: 1.4/1; background: var(--paper); border: 1px solid var(--border); position: relative; box-shadow: 2px 2px 12px rgba(0,0,0,0.04); }
-.art-envelope::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, transparent 49.5%, var(--border) 49.5%, var(--border) 50.5%, transparent 50.5%), linear-gradient(225deg, transparent 49.5%, var(--border) 49.5%, var(--border) 50.5%, transparent 50.5%); }
-.art-envelope .stamp { position: absolute; top: 12%; right: 12%; width: 18%; aspect-ratio: 1/1.2; border: 1px solid var(--text-faint); background: linear-gradient(135deg, var(--accent-light), var(--accent)); opacity: 0.3; }
-.art-envelope .addr { position: absolute; left: 50%; transform: translateX(-50%); height: 1px; background: var(--text-faint); opacity: 0.25; }
-.art-envelope .addr:nth-of-type(2) { top: 48%; width: 40%; }
-.art-envelope .addr:nth-of-type(3) { top: 56%; width: 32%; }
-.art-envelope .addr:nth-of-type(4) { top: 64%; width: 36%; }
-
-.art-cassette { width: 55%; aspect-ratio: 1.5/1; background: linear-gradient(180deg,#3a3530,#2a2622); border-radius: 3px; position: relative; box-shadow: 3px 3px 16px rgba(0,0,0,0.12); }
-.art-cassette .reel { position: absolute; width: 26%; aspect-ratio: 1/1; border-radius: 50%; border: 2px solid rgba(255,255,255,0.07); top: 44%; transform: translateY(-50%); display: flex; align-items: center; justify-content: center; }
-.art-cassette .reel-l { left: 16%; }
-.art-cassette .reel-r { right: 16%; }
-.art-cassette .reel-inner { width: 38%; aspect-ratio: 1/1; border-radius: 50%; border: 1px solid rgba(255,255,255,0.05); }
-.art-cassette .label-bg { position: absolute; top: 38%; left: 10%; right: 10%; bottom: 10%; background: rgba(255,255,255,0.05); border-radius: 1px; }
-.art-cassette .ll { position: absolute; left: 50%; transform: translateX(-50%); height: 1px; background: rgba(255,255,255,0.06); }
-.art-cassette .ll:nth-of-type(4) { top: 50%; width: 45%; }
-.art-cassette .ll:nth-of-type(5) { top: 56%; width: 30%; }
-.art-cassette .ll:nth-of-type(6) { top: 62%; width: 38%; }
-
-.art-polaroid { width: 48%; background: #f5f0e8; padding: 5% 5% 15% 5%; box-shadow: 3px 3px 16px rgba(0,0,0,0.07); }
-.art-polaroid .polaroid-img { width: 100%; aspect-ratio: 1/1; background: linear-gradient(135deg,#d4c9bb,#c4b7a5,#d4c9bb); position: relative; }
-.art-polaroid .polaroid-img::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 50%, rgba(0,0,0,0.03) 100%); }
-
-.art-recipe { width: 52%; aspect-ratio: 1/1.35; background: #fffbf0; border: 1px solid var(--border); padding: 8%; position: relative; }
-.art-recipe .r-line { height: 1.5px; background: var(--text-faint); margin-bottom: 6%; }
-.art-recipe .r-line:nth-child(1) { width: 55%; height: 3px; background: var(--text); opacity: 0.5; margin-bottom: 10%; }
-.art-recipe .r-line:nth-child(2) { width: 90%; }
-.art-recipe .r-line:nth-child(3) { width: 72%; }
-.art-recipe .r-line:nth-child(4) { width: 84%; }
-.art-recipe .r-line:nth-child(5) { width: 56%; }
-.art-recipe .r-line:nth-child(6) { width: 78%; margin-top: 10%; }
-.art-recipe .r-line:nth-child(7) { width: 65%; }
-
-.art-map { width: 60%; aspect-ratio: 1.3/1; background: #f0ebe0; border: 1px solid var(--border); position: relative; overflow: hidden; }
-.art-map::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg,transparent,transparent 10px,rgba(154,111,84,0.05) 10px,rgba(154,111,84,0.05) 11px), repeating-linear-gradient(90deg,transparent,transparent 10px,rgba(154,111,84,0.05) 10px,rgba(154,111,84,0.05) 11px); }
-.art-map .m-route { position: absolute; top: 30%; left: 18%; width: 50%; height: 2px; background: var(--accent); opacity: 0.35; border-radius: 2px; transform: rotate(-12deg); }
-.art-map .m-dot { position: absolute; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); opacity: 0.5; }
-.art-map .m-dot:nth-child(2) { top: 28%; left: 16%; }
-.art-map .m-dot:nth-child(3) { top: 36%; left: 64%; }
-.art-map .m-compass { position: absolute; bottom: 8%; right: 10%; width: 12%; aspect-ratio: 1/1; border-radius: 50%; border: 1px solid var(--text-faint); opacity: 0.2; }
-
-.art-film { width: 68%; aspect-ratio: 1.6/1; background: #2a2622; border-radius: 2px; display: flex; gap: 4%; padding: 3% 2%; position: relative; }
-.art-film .f-frame { flex: 1; background: linear-gradient(135deg,#4a443e,#3a3530); border-radius: 1px; position: relative; }
-.art-film .f-sprocket { position: absolute; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10%; }
-.art-film .f-sprocket-l { left: -2%; }
-.art-film .f-sprocket-r { right: -2%; }
-.art-film .f-hole { width: 3px; height: 3px; background: rgba(255,255,255,0.03); border-radius: 50%; }
-
-.art-vinyl { width: 55%; aspect-ratio: 1/1; border-radius: 50%; background: linear-gradient(135deg,#1a1a1a,#0a0a0a); position: relative; box-shadow: 3px 3px 20px rgba(0,0,0,0.15); }
-.art-vinyl::before { content: ''; position: absolute; inset: 15%; border-radius: 50%; background: linear-gradient(135deg,#2a2a2a,#1a1a1a); }
-.art-vinyl::after { content: ''; position: absolute; inset: 32%; border-radius: 50%; border: 1px solid rgba(255,255,255,0.03); }
-.art-vinyl .v-label { position: absolute; inset: 22%; border-radius: 50%; background: linear-gradient(135deg,var(--accent-light),var(--accent)); opacity: 0.15; }
-.art-vinyl .v-hole { position: absolute; width: 6%; aspect-ratio: 1/1; border-radius: 50%; background: var(--bg); top: 50%; left: 50%; transform: translate(-50%,-50%); opacity: 0.8; }
-.art-vinyl .v-groove { position: absolute; inset: 8%; border-radius: 50%; border: 1px solid rgba(255,255,255,0.02); }
-.art-vinyl .v-groove:nth-child(6) { inset: 14%; }
-.art-vinyl .v-groove:nth-child(7) { inset: 20%; }
-.art-vinyl .v-groove:nth-child(8) { inset: 26%; }
-
-.art-diary { width: 42%; aspect-ratio: 1/1.3; background: #6b3f2e; border-radius: 2px; position: relative; box-shadow: -4px 4px 16px rgba(0,0,0,0.1); }
-.art-diary .d-spine { position: absolute; left: 0; top: 0; bottom: 0; width: 8%; background: #4a2a1e; border-radius: 2px 0 0 2px; }
-.art-diary .d-pages { position: absolute; right: 4%; top: 5%; bottom: 5%; width: 5%; background: #f0e8dd; opacity: 0.2; border-radius: 1px; }
-.art-diary .d-lock { position: absolute; left: 18%; top: 42%; width: 10%; aspect-ratio: 1/1; border-radius: 50%; border: 2px solid var(--accent-light); opacity: 0.35; }
-.art-diary .d-lock::after { content: ''; position: absolute; top: -55%; left: 50%; transform: translateX(-50%); width: 55%; height: 55%; border: 2px solid var(--accent-light); border-bottom: none; border-radius: 50% 50% 0 0; opacity: 0.35; }
-
-.art-ticket { width: 62%; aspect-ratio: 1.8/1; background: var(--paper); border: 1px solid var(--border); border-right-style: dashed; position: relative; display: flex; align-items: center; justify-content: center; box-shadow: 2px 2px 12px rgba(0,0,0,0.04); }
-.art-ticket .t-tear { position: absolute; right: -1px; top: 0; bottom: 0; width: 6px; background: repeating-linear-gradient(90deg,transparent,transparent 2px,var(--bg) 2px,var(--bg) 5px); }
-.art-ticket .t-text { font-family: var(--font-mono); font-size: 0.45rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); text-align: center; line-height: 1.8; }
-.art-ticket .t-text strong { font-size: 0.6rem; letter-spacing: 0.08em; color: var(--text); }
-
-.art-stamp { width: 50%; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6%; aspect-ratio: 1.5/1; }
-.art-stamp .s-item { background: var(--paper); border: 1px solid var(--border); aspect-ratio: 1/1.2; display: flex; align-items: center; justify-content: center; position: relative; box-shadow: 1px 1px 6px rgba(0,0,0,0.03); }
-.art-stamp .s-item::before { content: ''; position: absolute; inset: 6px; border: 1px dashed var(--text-faint); opacity: 0.15; }
-.art-stamp .s-fill { width: 50%; aspect-ratio: 1/1; border-radius: 50%; opacity: 0.3; }
-.art-stamp .s-fill:nth-child(2) { background: var(--accent); }
-.art-stamp .s-item:nth-child(2) .s-fill { background: var(--sage); }
-.art-stamp .s-item:nth-child(3) .s-fill { background: var(--gold); }
-
-.art-typewriter { width: 58%; aspect-ratio: 1.6/1; position: relative; }
-.art-typewriter .tw-body { position: absolute; bottom: 0; left: 5%; right: 5%; height: 60%; background: linear-gradient(180deg,#3a3530,#2a2622); border-radius: 2px; }
-.art-typewriter .tw-roller { position: absolute; top: 18%; left: 8%; right: 8%; height: 8%; background: #2a2622; border-radius: 2px; }
-.art-typewriter .tw-paper { position: absolute; top: 0%; left: 22%; right: 22%; height: 40%; background: var(--paper); border: 1px solid var(--border); border-bottom: none; }
-.art-typewriter .tw-key { position: absolute; bottom: 6%; width: 4%; aspect-ratio: 1/1.2; background: rgba(255,255,255,0.06); border-radius: 1px; }
-.art-typewriter .tw-key:nth-child(5) { left: 18%; } .art-typewriter .tw-key:nth-child(6) { left: 24%; } .art-typewriter .tw-key:nth-child(7) { left: 30%; }
-.art-typewriter .tw-key:nth-child(8) { left: 38%; } .art-typewriter .tw-key:nth-child(9) { left: 44%; } .art-typewriter .tw-key:nth-child(10) { left: 50%; }
-.art-typewriter .tw-key:nth-child(11) { left: 58%; } .art-typewriter .tw-key:nth-child(12) { left: 64%; } .art-typewriter .tw-key:nth-child(13) { left: 70%; }
-
-.art-heart { width: 40%; aspect-ratio: 1/1; position: relative; display: flex; align-items: center; justify-content: center; }
-.art-heart .h-shape { width: 70%; aspect-ratio: 1/1; background: linear-gradient(135deg, var(--accent-light), var(--accent)); clip-path: path('M50,30 A20,20,0,0,1,85,30 A20,20,0,0,1,120,30 Q120,60,85,95 Q50,60,50,30'); transform: scale(0.7); opacity: 0.4; }
-.art-heart .h-text { position: absolute; font-family: var(--font-serif); font-size: 3rem; color: var(--accent); opacity: 0.1; font-style: italic; }
 
 /* modal */
 .modal-overlay {
@@ -391,35 +391,23 @@ nav {
 .modal-close:hover { background: var(--text-rich); color: var(--bg); border-color: var(--text-rich); }
 
 .modal-image {
-  width: 100%; aspect-ratio: 16 / 10;
+  width: 100%; max-height: 50vh;
   background: var(--paper-dark);
-  display: flex; flex-direction: column;
+  display: flex;
   align-items: center; justify-content: center;
-  padding: 2rem 3rem;
-  text-align: center;
   position: relative;
   overflow: hidden;
 }
-.modal-image-grain {
+.modal-image img {
+  width: 100%; height: 100%;
+  object-fit: contain;
+  max-height: 50vh;
+  display: block;
+}
+.modal-image .modal-image-bg {
   position: absolute; inset: 0;
   background: repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.02) 2px,rgba(0,0,0,0.02) 3px);
   pointer-events: none;
-}
-.modal-prompt-label {
-  font-family: var(--font-mono); font-size: 0.55rem;
-  text-transform: uppercase; letter-spacing: 0.2em;
-  color: var(--text-faint); margin-bottom: 0.75rem;
-}
-.modal-prompt {
-  font-family: var(--font-serif); font-style: italic;
-  font-size: clamp(0.85rem, 1.5vw, 1.05rem);
-  color: var(--text-muted); max-width: 600px;
-  line-height: 1.5;
-}
-.modal-dimensions {
-  margin-top: 0.75rem;
-  font-family: var(--font-mono); font-size: 0.55rem;
-  color: var(--text-faint); letter-spacing: 0.1em;
 }
 
 .modal-body { padding: 2rem 2.5rem 2.5rem; }
@@ -452,7 +440,6 @@ nav {
   gap: 1rem; margin-top: 1.5rem; padding-top: 1.5rem;
   border-top: 1px solid var(--border);
 }
-.modal-meta-item {}
 .modal-meta-label {
   font-family: var(--font-mono); font-size: 0.55rem;
   text-transform: uppercase; letter-spacing: 0.12em;
@@ -460,6 +447,23 @@ nav {
 }
 .modal-meta-value {
   font-size: 0.8rem; color: var(--text-muted);
+}
+
+.modal-source {
+  margin-top: 1rem; padding: 1rem 1.25rem;
+  background: var(--paper);
+}
+.modal-source-label {
+  font-family: var(--font-mono); font-size: 0.55rem;
+  text-transform: uppercase; letter-spacing: 0.15em;
+  color: var(--accent); margin-bottom: 0.3rem;
+}
+.modal-source-text {
+  font-size: 0.75rem; color: var(--text-muted); line-height: 1.5;
+}
+.modal-source-text a {
+  color: var(--accent); text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .modal-curator {
@@ -504,7 +508,6 @@ nav {
 }
 .submit-form .full-width { grid-column: 1 / -1; }
 
-.form-group {}
 .form-label {
   display: block;
   font-family: var(--font-mono); font-size: 0.6rem;
@@ -523,25 +526,16 @@ nav {
   transition: border-color 0.3s;
   outline: none;
 }
-.form-input:focus, .form-select:focus, .form-textarea:focus {
-  border-color: var(--accent);
-}
-.form-textarea {
-  min-height: 120px; resize: vertical;
-  line-height: 1.5;
-}
+.form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent); }
+.form-textarea { min-height: 120px; resize: vertical; line-height: 1.5; }
 .form-select {
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237a7068' stroke-width='1' fill='none'/%3E%3C/svg%3E");
   background-repeat: no-repeat; background-position: right 0.75rem center;
   background-size: 10px;
 }
-.form-file-wrapper {
-  position: relative;
-}
-.form-file-input {
-  position: absolute; inset: 0; opacity: 0; cursor: pointer;
-}
+.form-file-wrapper { position: relative; }
+.form-file-input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 .form-file-label {
   display: flex; align-items: center; gap: 0.75rem;
   padding: 0.65rem 0.9rem;
@@ -619,25 +613,34 @@ footer .footer-mono {
   .hero { padding: 5rem 1.5rem 3rem; min-height: 85vh; }
   .hero-badge { font-size: 0.5rem; padding: 0.3rem 0.75rem; }
   .manifesto { padding: 3rem 1.5rem; }
+  .lobby { padding: 3rem 1.25rem; }
+  .lobby-header { margin-bottom: 2rem; }
+  .lobby-grid { grid-template-columns: 1fr; gap: 1rem; }
+  .lobby-card { padding: 1.5rem; }
   .gallery-room { padding: 3rem 1.25rem 1.5rem; }
   .gallery-room-inner { flex-direction: column; gap: 0.5rem; }
   .gallery-number { font-size: 2.5rem; }
   .gallery-exhibits { grid-template-columns: 1fr; gap: 1rem; padding: 1.5rem 1.25rem 3rem; }
   .modal-body { padding: 1.25rem; }
-  .modal-image { padding: 1.5rem; aspect-ratio: 4/3; }
+  .modal-image { max-height: 35vh; }
+  .modal-image img { max-height: 35vh; }
   .modal-meta { grid-template-columns: 1fr 1fr; }
   .submit-form { grid-template-columns: 1fr; }
   .submit-section { padding: 3rem 1.25rem 4rem; }
   footer { margin: 0 1.25rem; padding: 2rem 1.25rem; }
   .modal-close { top: 0.75rem; right: 0.75rem; width: 2rem; height: 2rem; font-size: 1rem; }
+  .gallery-indicator { bottom: 1rem; padding: 0.5rem 1rem; gap: 1rem; }
+  .gi-label { font-size: 0.5rem; }
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
   .gallery-exhibits { grid-template-columns: repeat(2, 1fr); }
+  .lobby-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (min-width: 1280px) {
   .gallery-exhibits { grid-template-columns: repeat(3, 1fr); }
+  .lobby-grid { grid-template-columns: repeat(4, 1fr); }
 }
 </style>
 </head>
@@ -645,6 +648,13 @@ footer .footer-mono {
 
 <div class="scroll-track"><div class="scroll-thumb" id="scrollThumb"></div></div>
 <div class="scroll-label" id="scrollLabel">Lobby</div>
+
+<!-- gallery indicator -->
+<div class="gallery-indicator" id="galleryIndicator">
+  <button class="gi-arrow" id="giPrev" aria-label="Previous gallery">&larr;</button>
+  <span class="gi-label">You are in: <span id="giCurrent">Lobby</span></span>
+  <button class="gi-arrow" id="giNext" aria-label="Next gallery">&rarr;</button>
+</div>
 
 <nav>
   <span class="nav-title">The Human Archive</span>
@@ -659,7 +669,7 @@ footer .footer-mono {
   <div class="hero-badge">The Analog Era &mdash; c. 300,000 BCE &ndash; 2022 CE</div>
   <h1 class="hero-title">The Human<br>Archive</h1>
   <p class="hero-subtitle">Preserving what we made before the machines learned to think</p>
-  <button class="hero-cta" onclick="document.querySelector('.gallery-room').scrollIntoView({behavior:'smooth'})">
+  <button class="hero-cta" onclick="document.getElementById('lobby').scrollIntoView({behavior:'smooth'})">
     Enter the Museum
     <span>&#8595;</span>
   </button>
@@ -680,12 +690,73 @@ footer .footer-mono {
   <p>
     We preserve these objects not because they are useful, but because they are evidence of who we were.
   </p>
-  <p class="attribution">— Curatorial Statement</p>
+  <p class="attribution">&mdash; Curatorial Statement</p>
 </section>
 
 <div class="divider"><span class="divider-line"></span><span class="divider-dot"></span><span class="divider-line"></span></div>
 
-<!-- GALLERY ROOMS + EXHIBITS will be rendered by JS -->
+<!-- LOBBY -->
+<section id="lobby" class="lobby reveal">
+  <div class="lobby-header">
+    <h2>Museum Directory</h2>
+    <p>Select a gallery to enter. Each room contains artifacts from a different aspect of analog life.</p>
+  </div>
+  <div class="lobby-grid">
+    <div class="lobby-card" data-gallery="0">
+      <span class="lc-number">I</span>
+      <span class="lc-label">Gallery</span>
+      <h3 class="lc-name">The Correspondence Room</h3>
+      <p class="lc-desc">Words carried across distances by hand and heart. Before instant messaging, there was ink, paper, and the long wait for a reply.</p>
+      <span class="lc-enter">Enter &rarr;</span>
+    </div>
+    <div class="lobby-card" data-gallery="1">
+      <span class="lc-number">II</span>
+      <span class="lc-label">Gallery</span>
+      <h3 class="lc-name">The Memory Chamber</h3>
+      <p class="lc-desc">Light captured and preserved. Before infinite storage, every photograph was a choice, a risk, a moment that could not be retaken.</p>
+      <span class="lc-enter">Enter &rarr;</span>
+    </div>
+    <div class="lobby-card" data-gallery="2">
+      <span class="lc-number">III</span>
+      <span class="lc-label">Gallery</span>
+      <h3 class="lc-name">The Music Lounge</h3>
+      <p class="lc-desc">Sound made physical. Before streaming, music was something you held in your hands, read the liner notes, and cared for like a living thing.</p>
+      <span class="lc-enter">Enter &rarr;</span>
+    </div>
+    <div class="lobby-card" data-gallery="3">
+      <span class="lc-number">IV</span>
+      <span class="lc-label">Gallery</span>
+      <h3 class="lc-name">The Kitchen Archive</h3>
+      <p class="lc-desc">Recipes handwritten on index cards, stained with butter and chocolate. Cooking was memory passed down through splattered pages.</p>
+      <span class="lc-enter">Enter &rarr;</span>
+    </div>
+    <div class="lobby-card" data-gallery="4">
+      <span class="lc-number">V</span>
+      <span class="lc-label">Gallery</span>
+      <h3 class="lc-name">The Cartography Hall</h3>
+      <p class="lc-desc">Before GPS, you navigated by paper, memory, and the kindness of strangers. Getting lost was part of the journey.</p>
+      <span class="lc-enter">Enter &rarr;</span>
+    </div>
+    <div class="lobby-card" data-gallery="5">
+      <span class="lc-number">VI</span>
+      <span class="lc-label">Gallery</span>
+      <h3 class="lc-name">The Personal Vault</h3>
+      <p class="lc-desc">The things we kept hidden, sealed, and wrote only for ourselves. No audience but time.</p>
+      <span class="lc-enter">Enter &rarr;</span>
+    </div>
+    <div class="lobby-card" data-gallery="6">
+      <span class="lc-number">VII</span>
+      <span class="lc-label">Gallery</span>
+      <h3 class="lc-name">The Collectors' Corner</h3>
+      <p class="lc-desc">The things we kept just because. Ticket stubs, stamps, ephemera that meant nothing to anyone but us.</p>
+      <span class="lc-enter">Enter &rarr;</span>
+    </div>
+  </div>
+</section>
+
+<div class="divider"><span class="divider-line"></span><span class="divider-dot"></span><span class="divider-line"></span></div>
+
+<!-- GALLERY ROOMS + EXHIBITS rendered by JS -->
 <div id="galleryContainer"></div>
 
 <div class="divider"><span class="divider-line"></span><span class="divider-dot"></span><span class="divider-line"></span></div>
@@ -735,11 +806,11 @@ footer .footer-mono {
       <textarea class="form-textarea" id="artWhy" placeholder="What makes this piece of analog life worth remembering?"></textarea>
     </div>
     <div class="form-group">
-      <label class="form-label" for="artName">Your Name</label>
+      <label class="form-label" for="subName">Your Name</label>
       <input class="form-input" type="text" id="subName" placeholder="Anonymous">
     </div>
     <div class="form-group">
-      <label class="form-label" for="artEmail">Email (for follow-up)</label>
+      <label class="form-label" for="subEmail">Email (for follow-up)</label>
       <input class="form-input" type="email" id="subEmail" placeholder="optional">
     </div>
     <div class="form-group full-width">
@@ -767,10 +838,8 @@ footer .footer-mono {
   <div class="modal" id="modalContent">
     <button class="modal-close" id="modalClose">&#10005;</button>
     <div class="modal-image" id="modalImage">
-      <div class="modal-image-grain"></div>
-      <span class="modal-prompt-label">Image Prompt</span>
-      <p class="modal-prompt" id="modalPrompt"></p>
-      <p class="modal-dimensions" id="modalDims"></p>
+      <div class="modal-image-bg"></div>
+      <img id="modalMediaImage" src="" alt="">
     </div>
     <div class="modal-body">
       <div class="modal-header">
@@ -780,6 +849,10 @@ footer .footer-mono {
       </div>
       <div class="modal-description" id="modalDesc"></div>
       <div class="modal-meta" id="modalMeta"></div>
+      <div class="modal-source" id="modalSource">
+        <p class="modal-source-label">Public Domain Source</p>
+        <p class="modal-source-text" id="modalSourceText"></p>
+      </div>
       <div class="modal-curator">
         <p class="modal-curator-label">Curator's Note</p>
         <p class="modal-curator-note" id="modalCurator"></p>
@@ -806,9 +879,10 @@ const galleries = [
         ],
         curatorNote: 'A letter always arrives too early or too late. But when it arrives, it arrives as a physical piece of someone, folded into an envelope.',
         materials: 'Paper, iron gall ink, wax seal', origin: 'Universal', dimensions: 'Variable',
-        artClass: 'art-envelope',
-        prompt: 'A still-life arrangement of vintage handwritten letters on aged paper, elegant cursive script visible through translucent sheets, wax seal impressions in deep red, warm natural window light, shallow depth of field, tilted angles, shot on medium format film',
-        promptRatio: '16:10'
+        mediaUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Bixby_letter_facsimile.jpg/800px-Bixby_letter_facsimile.jpg',
+        mediaType: 'image',
+        source: 'Wikimedia Commons — The Bixby Letter, Abraham Lincoln (1864). Public domain via the Gilder Lehrman Institute.',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Bixby_letter_facsimile.jpg'
       },
       {
         id: 2, title: 'Love Letters',
@@ -821,9 +895,10 @@ const galleries = [
         ],
         curatorNote: 'I wrote to you every day for a year. You kept every one.',
         materials: 'Paper, ink, sealing wax, ribbon', origin: 'Universal', dimensions: 'Variable',
-        artClass: 'art-heart',
-        prompt: 'An open vintage love letter on cream paper, elegant flowing handwriting, a pressed dried flower resting on the page, wax seal in burgundy, soft golden hour light streaming diagonally across the paper, romantic mood, shallow depth of field, cinematic composition',
-        promptRatio: '16:10'
+        mediaUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Letter_from_Leonardo_da_Vinci_to_Ludovico_Sforza.jpg/800px-Letter_from_Leonardo_da_Vinci_to_Ludovico_Sforza.jpg',
+        mediaType: 'image',
+        source: 'Wikimedia Commons — Leonardo da Vinci\'s letter to Ludovico Sforza (1482). Public domain.',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Letter_from_Leonardo_da_Vinci_to_Ludovico_Sforza.jpg'
       },
       {
         id: 3, title: 'Postcards from Afar',
@@ -836,9 +911,10 @@ const galleries = [
         ],
         curatorNote: 'The postcard is a promise: I am somewhere you are not, and I am thinking of you.',
         materials: 'Cardstock, ink, postage stamp', origin: 'Universal', dimensions: '14 x 9 cm (standard)',
-        artClass: 'art-envelope',
-        prompt: 'A scattered collection of vintage postcards from different eras, each showing a different travel destination, handwritten messages visible on the backs, stamps with cancellation marks, warm afternoon light on a wooden table, nostalgic editorial still life',
-        promptRatio: '16:10'
+        mediaUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Steamer_Tahoe%2C_Lake_Tahoe.jpg/800px-Steamer_Tahoe%2C_Lake_Tahoe.jpg',
+        mediaType: 'image',
+        source: 'Wikimedia Commons — Steamer Tahoe postcard, Lake Tahoe (1910). Public domain.',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Steamer_Tahoe,_Lake_Tahoe.jpg'
       }
     ]
   },
@@ -857,9 +933,10 @@ const galleries = [
         ],
         curatorNote: 'No filters. No retakes. Just a single frame of captured light.',
         materials: 'Instant film, plastic casing, chemical emulsion', origin: 'Cambridge, Massachusetts', dimensions: '10.8 x 8.8 cm',
-        artClass: 'art-polaroid',
-        prompt: 'Vintage Polaroid photographs spread on a wooden surface, white borders visible, some slightly faded with age, warm sun-bleached tones, a mix of portraits and landscapes, soft shadows, editorial still life with nostalgic summer feeling, shot on film with natural grain',
-        promptRatio: '4:5'
+        mediaUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Polaroid_SX-70_%284462345243%29.jpg/800px-Polaroid_SX-70_%284462345243%29.jpg',
+        mediaType: 'image',
+        source: 'Wikimedia Commons — Polaroid SX-70 Land Camera (CC0).',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Polaroid_SX-70_(4462345243).jpg'
       },
       {
         id: 5, title: 'Film Photography',
@@ -872,9 +949,10 @@ const galleries = [
         ],
         curatorNote: 'The anticipation of the developed roll is a lost form of suspense.',
         materials: 'Celluloid film strip, silver halide emulsion', origin: 'Rochester, New York', dimensions: '35mm x 36 frames',
-        artClass: 'art-film',
-        prompt: 'A strip of developed 35mm film negatives held up to window light, sprocket holes visible, frames showing candid street photography scenes, grainy texture, warm sunlight passing through the translucent film, cinematic macro shot, nostalgic analog mood',
-        promptRatio: '16:10'
+        mediaUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/126_film_negative_strip_%28small%29.jpg/800px-126_film_negative_strip_%28small%29.jpg',
+        mediaType: 'image',
+        source: 'Wikimedia Commons — 126 film negative strip (CC BY-SA 3.0).',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:126_film_negative_strip_(small).jpg'
       },
       {
         id: 6, title: 'The Family Album',
@@ -887,9 +965,10 @@ const galleries = [
         ],
         curatorNote: 'The family album is our first encounter with the concept of an archive.',
         materials: 'Leather, cardstock, photographic paper', origin: 'Every home', dimensions: '30 x 25 cm (typical)',
-        artClass: 'art-polaroid',
-        prompt: 'An open vintage family photo album with clear plastic sleeves, filled with faded color photographs from the 1970s, leather binding worn at the edges, warm nostalgic lighting, candid snapshots visible, shot from above on a wooden coffee table, cozy documentary style',
-        promptRatio: '16:10'
+        mediaUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Sauk_Indian_family_by_Frank_Rinehart_1899.jpg/800px-Sauk_Indian_family_by_Frank_Rinehart_1899.jpg',
+        mediaType: 'image',
+        source: 'Wikimedia Commons — Sauk Indian family by Frank Rinehart (1899). Public domain via Library of Congress.',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Sauk_Indian_family_by_Frank_Rinehart_1899.jpg'
       }
     ]
   },
@@ -908,9 +987,10 @@ const galleries = [
         ],
         curatorNote: 'Each tape was a fingerprint of someone\'s emotional landscape.',
         materials: 'Magnetic tape, plastic shell, paper label', origin: 'Eindhoven, Netherlands', dimensions: '10 x 6.5 cm',
-        artClass: 'art-cassette',
-        prompt: 'A close-up of vintage cassette tapes with handwritten labels, magnetic tape visible through the transparent shell, soft warm lighting, nostalgic 80s color palette of warm browns and faded oranges, arranged on a wooden surface, editorial still life with shallow depth of field',
-        promptRatio: '16:10'
+        mediaUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Audio_cassette_tapes.jpg/800px-Audio_cassette_tapes.jpg',
+        mediaType: 'image',
+        source: 'Wikimedia Commons — Audio cassette tapes (Public Domain).',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Audio_cassette_tapes.jpg'
       },
       {
         id: 8, title: 'Vinyl Records',
@@ -923,9 +1003,10 @@ const galleries = [
         ],
         curatorNote: 'The pop and crackle before the first note was the sound of anticipation.',
         materials: 'Vinyl, cardboard sleeve, inner sleeve', origin: 'Universal', dimensions: '30.5 cm diameter',
-        artClass: 'art-vinyl',
-        prompt: 'A vinyl record on a vintage turntable, dust visible on the grooves, warm amber light from a nearby lamp, record sleeve with retro album art leaning in background, cozy late-night listening mood, filmic color grading with deep blacks and warm highlights',
-        promptRatio: '1:1'
+        mediaUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/HMV_Record_Player_2.jpg/800px-HMV_Record_Player_2.jpg',
+        mediaType: 'image',
+        source: 'Wikimedia Commons — HMV Record Player (CC0).',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:HMV_Record_Player_2.jpg'
       }
     ]
   },
@@ -944,9 +1025,10 @@ const galleries = [
         ],
         curatorNote: '"A pinch of this, a handful of that. You\'ll know when it\'s right."',
         materials: 'Cardstock, ink, food stains', origin: 'Every kitchen', dimensions: '12.5 x 7.5 cm',
-        artClass: 'art-recipe',
-        prompt: 'A collection of handwritten recipe cards on a flour-dusted wooden counter, cursive script with ingredient lists, kitchen window light casting soft shadows, a sprig of herbs nearby, warm domestic mood, editorial still life with vintage warmth and texture',
-        promptRatio: '4:5'
+        mediaUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Banbury_cheese_recipe%2C_Sloane_MS_1201.jpg/800px-Banbury_cheese_recipe%2C_Sloane_MS_1201.jpg',
+        mediaType: 'image',
+        source: 'Wikimedia Commons — Banbury cheese recipe, Sloane MS 1201 (15th-16th c.). Public domain via British Library.',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Banbury_cheese_recipe,_Sloane_MS_1201.jpg'
       }
     ]
   },
@@ -965,9 +1047,10 @@ const galleries = [
         ],
         curatorNote: 'Getting lost was part of the journey. There was no recalculating.',
         materials: 'Paper, ink, laminate', origin: 'Universal', dimensions: '100 x 70 cm (unfolded)',
-        artClass: 'art-map',
-        prompt: 'A folded vintage road map spread open on a car hood, hand-drawn route marked in red pen, creases and wear visible, warm golden hour lighting, dashboard visible in background, nostalgic road trip mood, cinematic documentary style',
-        promptRatio: '16:10'
+        mediaUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Turgot_map_of_Paris_-_Norman_B._Leventhal_Map_Center.jpg/800px-Turgot_map_of_Paris_-_Norman_B._Leventhal_Map_Center.jpg',
+        mediaType: 'image',
+        source: 'Wikimedia Commons — Turgot Map of Paris (1739). Public domain via Norman B. Leventhal Map Center / David Rumsey Collection.',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Turgot_map_of_Paris_-_Norman_B._Leventhal_Map_Center.jpg'
       }
     ]
   },
@@ -984,11 +1067,12 @@ const galleries = [
           'A diary was a conversation with no audience but yourself. You wrote what you could not say, confessed what you could not admit, and recorded the mundane details that would later become the texture of a vanished life.',
           'The lock was symbolic. Anyone determined enough could break it. But the act of locking was the act of declaring this is mine and mine alone.'
         ],
-        curatorNote: 'The diary is the only place where you can speak the truth. &mdash; Anais Nin',
+        curatorNote: 'The diary is the only place where you can speak the truth. &mdash; Ana\u00efs Nin',
         materials: 'Paper, board, metal lock', origin: 'Universal', dimensions: 'Variable',
-        artClass: 'art-diary',
-        prompt: 'An open vintage diary on a wooden desk, handwritten pages with ink, a small brass key resting nearby, soft window light illuminating the pages, intimate and private atmosphere, muted earth tones, shallow depth of field, editorial still life',
-        promptRatio: '4:5'
+        mediaUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Samuel_Hadlock%27s_Journal,_Europe,_1824-1826,_page_51_(ac0dd8d1-7ae7-46f7-9560-5bd906e18452).tif?width=800',
+        mediaType: 'image',
+        source: 'Wikimedia Commons — Samuel Hadlock\'s Journal, Europe, 1824-1826. Public domain via US National Park Service.',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Samuel_Hadlock%27s_Journal,_Europe,_1824-1826,_page_51_(ac0dd8d1-7ae7-46f7-9560-5bd906e18452).tif'
       }
     ]
   },
@@ -1007,9 +1091,10 @@ const galleries = [
         ],
         curatorNote: 'You kept the stub. The digital ticket just disappears.',
         materials: 'Cardstock, thermal ink, perforated paper', origin: 'Universal', dimensions: 'Variable',
-        artClass: 'art-ticket',
-        prompt: 'A collection of vintage concert ticket stubs from different decades, torn perforations visible, faded printing, arranged on a worn corkboard with pushpins, warm nostalgic lighting, documentary style, shallow depth of field with one stub in sharp focus',
-        promptRatio: '16:10'
+        mediaUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Varsity_Show_ticket.jpg/800px-Varsity_Show_ticket.jpg',
+        mediaType: 'image',
+        source: 'Wikimedia Commons — Varsity Show ticket, Columbia University (1904). Public domain.',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Varsity_Show_ticket.jpg'
       },
       {
         id: 13, title: 'Stamp Collections',
@@ -1022,9 +1107,10 @@ const galleries = [
         ],
         curatorNote: 'Every stamp tells a story. You just have to know where to look.',
         materials: 'Paper, adhesive, perforated edges', origin: 'Universal', dimensions: 'Variable (2-5 cm)',
-        artClass: 'art-stamp',
-        prompt: 'A vintage stamp collection album open to a page, colorful stamps from different countries arranged in rows, magnifying glass resting nearby, warm library lighting, detailed macro view showing perforations and postmarks, nostalgic collector aesthetic',
-        promptRatio: '16:10'
+        mediaUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Franklin_SC1_1847.jpg/800px-Franklin_SC1_1847.jpg',
+        mediaType: 'image',
+        source: 'Wikimedia Commons — US 1847 Benjamin Franklin 5-cent stamp (Scott #1). Public domain.',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Franklin_SC1_1847.jpg'
       }
     ]
   }
@@ -1033,9 +1119,10 @@ const galleries = [
 // RENDER GALLERIES
 const container = document.getElementById('galleryContainer');
 
-galleries.forEach(gallery => {
+galleries.forEach((gallery, gi) => {
   const room = document.createElement('section');
   room.className = 'gallery-room reveal';
+  room.id = 'gallery-' + gi;
   room.innerHTML = `
     <div class="gallery-room-inner">
       <span class="gallery-number">${gallery.num}</span>
@@ -1056,12 +1143,12 @@ galleries.forEach(gallery => {
     card.className = 'exhibit reveal';
     card.dataset.id = exhibit.id;
 
-    const visualHTML = renderArt(exhibit.artClass);
+    const mediaTypeIcon = exhibit.mediaType === 'audio' ? 'Audio' : 'Image';
 
     card.innerHTML = `
       <div class="exhibit-visual">
-        ${visualHTML}
-        <span class="prompt-badge">${exhibit.promptRatio}</span>
+        <img src="${exhibit.mediaUrl}" alt="${exhibit.title}" loading="lazy">
+        <span class="media-badge">${mediaTypeIcon}</span>
       </div>
       <div class="exhibit-body">
         <span class="exhibit-era">${exhibit.era}</span>
@@ -1080,35 +1167,6 @@ galleries.forEach(gallery => {
   container.appendChild(grid);
 });
 
-function renderArt(artClass) {
-  switch(artClass) {
-    case 'art-envelope':
-      return `<div class="art-envelope"><div class="stamp"></div><div class="addr"></div><div class="addr"></div><div class="addr"></div></div>`;
-    case 'art-heart':
-      return `<div class="art-heart"><div class="h-shape"></div><div class="h-text">&hearts;</div></div>`;
-    case 'art-cassette':
-      return `<div class="art-cassette"><div class="reel reel-l"><div class="reel-inner"></div></div><div class="reel reel-r"><div class="reel-inner"></div></div><div class="label-bg"></div><div class="ll"></div><div class="ll"></div><div class="ll"></div></div>`;
-    case 'art-polaroid':
-      return `<div class="art-polaroid"><div class="polaroid-img"></div></div>`;
-    case 'art-recipe':
-      return `<div class="art-recipe"><div class="r-line"></div><div class="r-line"></div><div class="r-line"></div><div class="r-line"></div><div class="r-line"></div><div class="r-line"></div><div class="r-line"></div></div>`;
-    case 'art-map':
-      return `<div class="art-map"><div class="m-route"></div><div class="m-dot"></div><div class="m-dot"></div><div class="m-compass"></div></div>`;
-    case 'art-film':
-      return `<div class="art-film"><div class="f-sprocket f-sprocket-l"><div class="f-hole"></div><div class="f-hole"></div><div class="f-hole"></div><div class="f-hole"></div></div><div class="f-frame"></div><div class="f-frame"></div><div class="f-frame"></div><div class="f-sprocket f-sprocket-r"><div class="f-hole"></div><div class="f-hole"></div><div class="f-hole"></div><div class="f-hole"></div></div></div>`;
-    case 'art-vinyl':
-      return `<div class="art-vinyl"><div class="v-label"></div><div class="v-hole"></div><div class="v-groove"></div><div class="v-groove"></div><div class="v-groove"></div><div class="v-groove"></div></div>`;
-    case 'art-diary':
-      return `<div class="art-diary"><div class="d-spine"></div><div class="d-pages"></div><div class="d-lock"></div></div>`;
-    case 'art-ticket':
-      return `<div class="art-ticket"><div class="t-tear"></div><div class="t-text"><strong>LIVE</strong><br>SECTION &bull; ROW &bull; SEAT<br>ADMIT ONE<br><span style="font-size:0.4rem">NO REFUNDS</span></div></div>`;
-    case 'art-stamp':
-      return `<div class="art-stamp"><div class="s-item"><div class="s-fill"></div></div><div class="s-item"><div class="s-fill"></div></div><div class="s-item"><div class="s-fill"></div></div></div>`;
-    default:
-      return `<div class="art-envelope"><div class="stamp"></div><div class="addr"></div><div class="addr"></div><div class="addr"></div></div>`;
-  }
-}
-
 // MODAL
 const overlay = document.getElementById('modalOverlay');
 const content = document.getElementById('modalContent');
@@ -1119,12 +1177,13 @@ function openModal(exhibit) {
   document.getElementById('modalTags').innerHTML = exhibit.tags.map(t => `<span class="modal-tag">${t}</span>`).join('');
   document.getElementById('modalDesc').innerHTML = exhibit.fullDesc.map(p => `<p>${p}</p>`).join('');
   document.getElementById('modalCurator').textContent = exhibit.curatorNote;
-  document.getElementById('modalPrompt').textContent = exhibit.prompt;
-  document.getElementById('modalDims').textContent = `Recommended: ${exhibit.promptRatio} | ${exhibit.dimensions}`;
+  document.getElementById('modalMediaImage').src = exhibit.mediaUrl;
+  document.getElementById('modalMediaImage').alt = exhibit.title;
+  document.getElementById('modalSourceText').innerHTML = exhibit.source + ' <a href="' + exhibit.sourceUrl + '" target="_blank" rel="noopener">View on Commons &nearr;</a>';
   document.getElementById('modalMeta').innerHTML = `
-    <div class="modal-meta-item"><p class="modal-meta-label">Materials</p><p class="modal-meta-value">${exhibit.materials}</p></div>
-    <div class="modal-meta-item"><p class="modal-meta-label">Origin</p><p class="modal-meta-value">${exhibit.origin}</p></div>
-    <div class="modal-meta-item"><p class="modal-meta-label">Category</p><p class="modal-meta-value">${exhibit.category}</p></div>
+    <div><p class="modal-meta-label">Materials</p><p class="modal-meta-value">${exhibit.materials}</p></div>
+    <div><p class="modal-meta-label">Origin</p><p class="modal-meta-value">${exhibit.origin}</p></div>
+    <div><p class="modal-meta-label">Category</p><p class="modal-meta-value">${exhibit.category}</p></div>
   `;
   overlay.classList.add('active');
   document.body.style.overflow = 'hidden';
@@ -1143,11 +1202,83 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closeModal();
 });
 
+// LOBBY CARD CLICKS
+document.querySelectorAll('.lobby-card').forEach(card => {
+  card.addEventListener('click', function() {
+    const gi = parseInt(this.dataset.gallery);
+    const target = document.getElementById('gallery-' + gi);
+    if (target) target.scrollIntoView({ behavior: 'smooth' });
+  });
+});
+
+// GALLERY NAVIGATION (arrow keys + indicator buttons)
+const gallerySections = [];
+document.querySelectorAll('.gallery-room').forEach(el => gallerySections.push(el));
+const giIndicator = document.getElementById('galleryIndicator');
+const giCurrent = document.getElementById('giCurrent');
+const giPrev = document.getElementById('giPrev');
+const giNext = document.getElementById('giNext');
+
+function getCurrentGalleryIndex() {
+  let currentIdx = -1;
+  gallerySections.forEach((section, i) => {
+    const rect = section.getBoundingClientRect();
+    if (rect.top < window.innerHeight * 0.5 && rect.bottom > 0) {
+      currentIdx = i;
+    }
+  });
+  return currentIdx;
+}
+
+function scrollToGallery(idx) {
+  if (idx < 0 || idx >= gallerySections.length) return;
+  gallerySections[idx].scrollIntoView({ behavior: 'smooth' });
+  updateGalleryIndicator();
+}
+
+function updateGalleryIndicator() {
+  const idx = getCurrentGalleryIndex();
+  if (idx >= 0) {
+    giCurrent.textContent = galleries[idx].name;
+    giPrev.disabled = idx === 0;
+    giNext.disabled = idx === gallerySections.length - 1;
+    if (!giIndicator.classList.contains('visible')) {
+      giIndicator.classList.add('visible');
+    }
+  } else {
+    giCurrent.textContent = 'Lobby';
+    giPrev.disabled = true;
+    giNext.disabled = true;
+    if (window.scrollY < 200) {
+      giIndicator.classList.remove('visible');
+    }
+  }
+}
+
+giPrev.addEventListener('click', () => {
+  const idx = getCurrentGalleryIndex();
+  if (idx > 0) scrollToGallery(idx - 1);
+});
+
+giNext.addEventListener('click', () => {
+  const idx = getCurrentGalleryIndex();
+  if (idx >= 0 && idx < gallerySections.length - 1) scrollToGallery(idx + 1);
+});
+
+document.addEventListener('keydown', (e) => {
+  if (overlay.classList.contains('active')) return;
+  if (e.key === 'ArrowLeft') {
+    const idx = getCurrentGalleryIndex();
+    if (idx > 0) { e.preventDefault(); scrollToGallery(idx - 1); }
+  } else if (e.key === 'ArrowRight') {
+    const idx = getCurrentGalleryIndex();
+    if (idx >= 0 && idx < gallerySections.length - 1) { e.preventDefault(); scrollToGallery(idx + 1); }
+  }
+});
+
 // SCROLL PROGRESS + LABEL
 const thumb = document.getElementById('scrollThumb');
 const label = document.getElementById('scrollLabel');
-const sections = [];
-document.querySelectorAll('.gallery-room').forEach(el => sections.push(el));
 
 function updateScroll() {
   const scrollY = window.scrollY;
@@ -1157,7 +1288,14 @@ function updateScroll() {
   thumb.style.top = (progress * maxTop) + 'px';
 
   let currentLabel = 'Lobby';
-  sections.forEach(section => {
+  const lobbySection = document.getElementById('lobby');
+  if (lobbySection) {
+    const lobbyRect = lobbySection.getBoundingClientRect();
+    if (lobbyRect.top < window.innerHeight * 0.5 && lobbyRect.bottom > 0) {
+      currentLabel = 'Museum Directory';
+    }
+  }
+  gallerySections.forEach(section => {
     const rect = section.getBoundingClientRect();
     if (rect.top < window.innerHeight * 0.5) {
       const name = section.querySelector('.gallery-name');
@@ -1170,6 +1308,8 @@ function updateScroll() {
   label.textContent = currentLabel;
   if (scrollY > 200) { label.classList.add('visible'); }
   else { label.classList.remove('visible'); }
+
+  updateGalleryIndicator();
 }
 
 window.addEventListener('scroll', updateScroll);
@@ -1217,7 +1357,6 @@ form.addEventListener('submit', (e) => {
   document.getElementById('fileLabel').textContent = 'Attach a photograph of the artifact';
 });
 
-// File input label
 document.getElementById('artImage').addEventListener('change', function(e) {
   const file = e.target.files[0];
   document.getElementById('fileLabel').textContent = file ? file.name : 'Attach a photograph of the artifact';
