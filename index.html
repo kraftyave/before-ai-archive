@@ -1048,7 +1048,7 @@ textureLoader.manager.onProgress = (url, loaded, total) => {
 
 // Fallback: show enter button after 5s even if not all textures loaded
 setTimeout(() => {
-  if (enterBtn.style.display !== 'none') {
+  if (loaderEl.style.display !== 'none') {
     loaderEl.style.opacity = '0';
     setTimeout(() => {
       loaderEl.style.display = 'none';
