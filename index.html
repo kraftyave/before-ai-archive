@@ -20,641 +20,148 @@
   --accent-light: #c4957a;
   --accent-deep: #7a553f;
   --sage: #7d8a6e;
-  --gold: #c4a268;
-  --gold-light: #d4b888;
   --border: #d6cbbf;
-  --shadow: rgba(26, 24, 23, 0.06);
   --shadow-strong: rgba(26, 24, 23, 0.1);
   --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'Fragment Mono', 'SF Mono', Monaco, monospace;
 }
-
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-html { scroll-behavior: smooth; font-size: 16px; }
-
-body {
-  background-color: var(--bg);
-  color: var(--text-rich);
-  font-family: var(--font-sans);
-  font-weight: 300;
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-::selection { background: var(--accent); color: white; }
-
-body::before {
-  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 1000;
-  opacity: 0.025;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-repeat: repeat; background-size: 256px 256px;
-}
-
-/* scroll progress */
-.scroll-track {
-  position: fixed; right: 1.5rem; top: 50%; transform: translateY(-50%);
-  z-index: 200; width: 1px; height: 200px;
-  background: var(--border); display: flex; flex-direction: column; align-items: center;
-}
-.scroll-thumb {
-  width: 1px; height: 40px; background: var(--accent);
-  position: absolute; top: 0; transition: top 0.1s ease;
-}
-.scroll-label {
-  position: fixed; right: 3.5rem; top: 50%; transform: translateY(-50%);
-  font-family: var(--font-mono); font-size: 0.55rem;
-  text-transform: uppercase; letter-spacing: 0.15em;
-  color: var(--text-faint); pointer-events: none; z-index: 200;
-  text-align: right; line-height: 1.3;
-  transition: opacity 0.4s; opacity: 0;
-}
-.scroll-label.visible { opacity: 1; }
-
-@media (max-width: 768px) {
-  .scroll-track, .scroll-label { display: none; }
-}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;font-size:16px}
+body{background:var(--bg);color:var(--text-rich);font-family:var(--font-sans);font-weight:300;line-height:1.6;-webkit-font-smoothing:antialiased}
+::selection{background:var(--accent);color:white}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:1000;opacity:0.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-repeat:repeat;background-size:256px 256px}
 
 /* nav */
-nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  padding: 1.25rem 2.5rem;
-  display: flex; justify-content: space-between; align-items: center;
-  background: linear-gradient(180deg, rgba(246,241,235,0.95) 0%, rgba(246,241,235,0) 100%);
-  backdrop-filter: blur(8px);
-}
-.nav-title { font-family: var(--font-serif); font-size: 1rem; color: var(--text); font-weight: 400; }
-.nav-right { display: flex; align-items: center; gap: 1.5rem; }
-.nav-link {
-  font-family: var(--font-mono); font-size: 0.65rem;
-  text-transform: uppercase; letter-spacing: 0.15em;
-  color: var(--text-muted); text-decoration: none; transition: color 0.3s; cursor: pointer;
-  background: none; border: none;
-}
-.nav-link:hover { color: var(--accent); }
-
-/* gallery indicator */
-.gallery-indicator {
-  position: fixed; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
-  z-index: 150;
-  display: flex; align-items: center; gap: 1.5rem;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  padding: 0.6rem 1.25rem;
-  opacity: 0; visibility: hidden;
-  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  box-shadow: 0 4px 24px var(--shadow-strong);
-}
-.gallery-indicator.visible { opacity: 1; visibility: visible; }
-.gi-arrow {
-  font-family: var(--font-sans); font-size: 1rem;
-  color: var(--text-muted); cursor: pointer;
-  background: none; border: none;
-  padding: 0.25rem;
-  transition: color 0.3s;
-}
-.gi-arrow:hover { color: var(--accent); }
-.gi-arrow:disabled { opacity: 0.15; cursor: default; }
-.gi-label {
-  font-family: var(--font-mono); font-size: 0.6rem;
-  text-transform: uppercase; letter-spacing: 0.12em;
-  color: var(--text-muted);
-  white-space: nowrap;
-}
-.gi-label span { color: var(--text-rich); }
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.25rem 2.5rem;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(180deg,rgba(246,241,235,0.95) 0%,rgba(246,241,235,0) 100%);backdrop-filter:blur(8px)}
+.nav-title{font-family:var(--font-serif);font-size:1rem;color:var(--text);font-weight:400}
+.nav-right{display:flex;align-items:center;gap:1.5rem}
+.nav-link{font-family:var(--font-mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.15em;color:var(--text-muted);text-decoration:none;transition:color .3s;cursor:pointer;background:none;border:none}
+.nav-link:hover{color:var(--accent)}
 
 /* hero */
-.hero {
-  min-height: 100vh;
-  display: flex; flex-direction: column; justify-content: center; align-items: center;
-  text-align: center; padding: 6rem 2rem 4rem; position: relative;
-}
-.hero-label {
-  font-family: var(--font-mono); font-size: 0.65rem;
-  text-transform: uppercase; letter-spacing: 0.3em;
-  color: var(--text-muted); margin-bottom: 1.5rem;
-}
-.hero-badge {
-  display: inline-flex; align-items: center; gap: 0.5rem;
-  padding: 0.4rem 1rem;
-  border: 1px solid var(--border);
-  font-family: var(--font-mono); font-size: 0.6rem;
-  text-transform: uppercase; letter-spacing: 0.2em;
-  color: var(--text-muted); margin-bottom: 2.5rem;
-  background: var(--paper);
-}
-.hero-title {
-  font-family: var(--font-serif); font-size: clamp(3.5rem, 12vw, 8rem);
-  font-weight: 400; line-height: 1.0;
-  color: var(--text); max-width: 950px; margin-bottom: 0.5rem;
-  letter-spacing: -0.02em;
-}
-.hero-title em { font-style: italic; font-weight: 400; }
-.hero-subtitle {
-  font-family: var(--font-serif); font-size: clamp(1.1rem, 2.5vw, 1.45rem);
-  font-style: italic; color: var(--text-muted); max-width: 550px;
-  margin-bottom: 3rem;
-}
-.hero-cta {
-  display: inline-flex; align-items: center; gap: 0.75rem;
-  padding: 0.75rem 1.75rem;
-  border: 1px solid var(--text-rich); background: transparent;
-  font-family: var(--font-mono); font-size: 0.7rem;
-  text-transform: uppercase; letter-spacing: 0.2em;
-  color: var(--text-rich); text-decoration: none; cursor: pointer;
-  transition: all 0.3s;
-}
-.hero-cta:hover { background: var(--text-rich); color: var(--bg); }
-.hero-scroll {
-  position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
-  display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
-  color: var(--text-faint); font-family: var(--font-mono); font-size: 0.6rem;
-  text-transform: uppercase; letter-spacing: 0.2em;
-  animation: float 3s ease-in-out infinite;
-}
-.hero-scroll-line { width: 1px; height: 40px; background: var(--text-faint); }
-@keyframes float { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(-6px); } }
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:7rem 2rem 8rem;position:relative}
+.hero-label{font-family:var(--font-mono);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.3em;color:var(--text-muted);margin-bottom:1.5rem}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;padding:.4rem 1rem;border:1px solid var(--border);font-family:var(--font-mono);font-size:0.6rem;text-transform:uppercase;letter-spacing:.2em;color:var(--text-muted);margin-bottom:2.5rem;background:var(--paper)}
+.hero-title{font-family:var(--font-serif);font-size:clamp(3.5rem,12vw,8rem);font-weight:400;line-height:1.0;color:var(--text);max-width:950px;margin-bottom:.5rem;letter-spacing:-.02em}
+.hero-subtitle{font-family:var(--font-serif);font-size:clamp(1.1rem,2.5vw,1.45rem);font-style:italic;color:var(--text-muted);max-width:550px;margin-bottom:3rem}
+.hero-cta{display:inline-flex;align-items:center;gap:.75rem;padding:.85rem 2rem;border:1px solid var(--text-rich);background:transparent;font-family:var(--font-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.2em;color:var(--text-rich);text-decoration:none;cursor:pointer;transition:all .3s}
+.hero-cta:hover{background:var(--text-rich);color:var(--bg)}
+.hero-scroll{position:absolute;bottom:3rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.5rem;color:var(--text-faint);font-family:var(--font-mono);font-size:.6rem;text-transform:uppercase;letter-spacing:.2em;animation:float 3s ease-in-out infinite;pointer-events:none}
+.hero-scroll-line{width:1px;height:40px;background:var(--text-faint)}
+@keyframes float{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-6px)}}
 
 /* manifesto */
-.manifesto {
-  max-width: 720px; margin: 0 auto; padding: 5rem 2rem; text-align: center;
-}
-.manifesto p {
-  font-family: var(--font-serif); font-size: clamp(1.1rem, 2vw, 1.35rem);
-  line-height: 1.7; color: var(--text-rich); margin-bottom: 1.25rem;
-}
-.manifesto .attribution {
-  font-family: var(--font-sans); font-size: 0.75rem; color: var(--text-muted);
-  font-style: normal; margin-top: 1.5rem; letter-spacing: 0.05em;
-}
+.manifesto{max-width:720px;margin:0 auto;padding:5rem 2rem;text-align:center}
+.manifesto p{font-family:var(--font-serif);font-size:clamp(1.1rem,2vw,1.35rem);line-height:1.7;color:var(--text-rich);margin-bottom:1.25rem}
+.manifesto .attribution{font-family:var(--font-sans);font-size:.75rem;color:var(--text-muted);font-style:normal;margin-top:1.5rem;letter-spacing:.05em}
 
-/* lobby */
-.lobby {
-  max-width: 1280px; margin: 0 auto; padding: 5rem 2rem;
-}
-.lobby-header {
-  text-align: center; margin-bottom: 3.5rem;
-}
-.lobby-header h2 {
-  font-family: var(--font-serif); font-size: clamp(1.8rem, 4vw, 2.6rem);
-  font-weight: 400; margin-bottom: 0.5rem;
-}
-.lobby-header p {
-  color: var(--text-muted); font-size: 0.9rem; max-width: 500px; margin: 0 auto;
-}
-.lobby-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 1.25rem;
-}
-.lobby-card {
-  background: var(--paper);
-  border: 1px solid var(--border);
-  padding: 2rem;
-  cursor: pointer;
-  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  position: relative;
-  display: flex; flex-direction: column;
-}
-.lobby-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 48px var(--shadow);
-}
-.lobby-card:active { transform: translateY(-1px); }
-.lc-number {
-  font-family: var(--font-serif); font-size: 3rem;
-  color: var(--text-faint); line-height: 1; margin-bottom: 0.75rem;
-  opacity: 0.4;
-}
-.lc-label {
-  font-family: var(--font-mono); font-size: 0.55rem;
-  text-transform: uppercase; letter-spacing: 0.25em;
-  color: var(--text-muted); margin-bottom: 0.35rem;
-}
-.lc-name {
-  font-family: var(--font-serif); font-size: 1.3rem;
-  font-weight: 400; margin-bottom: 0.5rem;
-  color: var(--text-rich);
-}
-.lc-desc {
-  font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;
-  margin-bottom: 1.25rem; flex: 1;
-}
-.lc-enter {
-  font-family: var(--font-mono); font-size: 0.6rem;
-  text-transform: uppercase; letter-spacing: 0.15em;
-  color: var(--accent);
-  display: flex; align-items: center; gap: 0.5rem;
-  transition: gap 0.3s;
-}
-.lobby-card:hover .lc-enter { gap: 0.75rem; }
+/* 3D museum section */
+#three-section{position:relative;width:100%;height:100vh;background:#1a1817;overflow:hidden;cursor:grab}
+#three-section:active{cursor:grabbing}
+#three-canvas{display:block;width:100%;height:100%}
 
-/* gallery room label */
-.gallery-room {
-  padding: 6rem 2rem 2rem;
-  max-width: 1280px; margin: 0 auto;
-  scroll-margin-top: 5rem;
-}
-.gallery-room-inner {
-  display: flex; align-items: flex-start; gap: 2rem;
-  border-top: 2px solid var(--text-rich);
-  padding-top: 2rem;
-}
-.gallery-number {
-  font-family: var(--font-serif); font-size: 3.5rem; font-weight: 400;
-  color: var(--text-faint); line-height: 1; min-width: 2.5rem;
-  opacity: 0.5;
-}
-.gallery-info { flex: 1; }
-.gallery-label {
-  font-family: var(--font-mono); font-size: 0.6rem;
-  text-transform: uppercase; letter-spacing: 0.25em;
-  color: var(--text-muted); margin-bottom: 0.5rem;
-}
-.gallery-name {
-  font-family: var(--font-serif); font-size: clamp(1.6rem, 3vw, 2.2rem);
-  font-weight: 400; color: var(--text-rich); margin-bottom: 0.4rem;
-}
-.gallery-desc {
-  font-size: 0.9rem; color: var(--text-muted); max-width: 500px;
-}
-.gallery-exhibits {
-  max-width: 1280px; margin: 0 auto;
-  padding: 2rem 2rem 5rem;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.25rem;
-}
+#three-ui{position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);z-index:10;display:flex;align-items:center;gap:1.5rem;background:rgba(26,24,23,.85);border:1px solid rgba(255,255,255,.08);padding:.65rem 1.25rem;backdrop-filter:blur(8px)}
+#three-ui .gi-arrow{font-family:var(--font-sans);font-size:1rem;color:rgba(255,255,255,.5);cursor:pointer;background:none;border:none;padding:.25rem;transition:color .3s}
+#three-ui .gi-arrow:hover{color:var(--accent-light)}
+#three-ui .gi-arrow:disabled{opacity:.15;cursor:default}
+#three-ui .gi-label{font-family:var(--font-mono);font-size:.6rem;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.4);white-space:nowrap}
+#three-ui .gi-label span{color:rgba(255,255,255,.85)}
+#three-ui .gi-count{font-family:var(--font-mono);font-size:.5rem;color:rgba(255,255,255,.25);white-space:nowrap}
 
-/* exhibit card */
-.exhibit {
-  background: var(--paper);
-  border: 1px solid var(--border);
-  cursor: pointer;
-  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  display: flex; flex-direction: column;
-  position: relative;
-  overflow: hidden;
-}
-.exhibit:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 48px var(--shadow);
-}
-.exhibit:active { transform: translateY(-1px); }
-
-.exhibit-visual {
-  width: 100%; aspect-ratio: 16 / 10;
-  position: relative; overflow: hidden;
-  background: var(--paper-dark);
-}
-.exhibit-visual img {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  display: block;
-  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-.exhibit:hover .exhibit-visual img {
-  transform: scale(1.05);
-}
-.exhibit-visual .media-badge {
-  position: absolute; bottom: 0.5rem; right: 0.5rem;
-  font-family: var(--font-mono); font-size: 0.5rem;
-  text-transform: uppercase; letter-spacing: 0.1em;
-  color: var(--text-faint); background: rgba(246,241,235,0.85);
-  padding: 0.2rem 0.5rem;
-  border: 1px solid var(--border);
-  pointer-events: none;
-}
-.exhibit-body { padding: 1.25rem 1.25rem 1.25rem; flex: 1; display: flex; flex-direction: column; }
-.exhibit-era {
-  font-family: var(--font-mono); font-size: 0.6rem;
-  color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em;
-  margin-bottom: 0.35rem;
-}
-.exhibit-title {
-  font-family: var(--font-serif); font-size: 1.2rem;
-  font-weight: 400; line-height: 1.3; margin-bottom: 0.4rem;
-}
-.exhibit-desc {
-  font-size: 0.8rem; color: var(--text-muted);
-  line-height: 1.5; margin-bottom: 0.75rem; flex: 1;
-}
-.exhibit-tags {
-  display: flex; flex-wrap: wrap; gap: 0.4rem;
-  margin-bottom: 0.5rem;
-}
-.exhibit-tag {
-  font-family: var(--font-mono); font-size: 0.55rem;
-  text-transform: uppercase; letter-spacing: 0.08em;
-  padding: 0.15rem 0.5rem;
-  border: 1px solid var(--border);
-  color: var(--text-muted);
-}
-
-/* modal */
-.modal-overlay {
-  position: fixed; inset: 0; z-index: 500;
-  background: rgba(26, 24, 23, 0.6);
-  backdrop-filter: blur(4px);
-  display: flex; align-items: center; justify-content: center;
-  opacity: 0; visibility: hidden;
-  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  padding: 2rem;
-  overflow-y: auto;
-}
-.modal-overlay.active { opacity: 1; visibility: visible; }
-
-.modal {
-  background: var(--bg);
-  max-width: 900px; width: 100%;
-  max-height: 90vh; overflow-y: auto;
-  position: relative;
-  transform: translateY(40px) scale(0.97);
-  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-.modal-overlay.active .modal { transform: translateY(0) scale(1); }
-
-.modal-close {
-  position: fixed; top: 1.25rem; right: 1.25rem;
-  width: 2.5rem; height: 2.5rem;
-  border: 1px solid var(--border);
-  background: var(--bg);
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-sans); font-size: 1.2rem;
-  color: var(--text-muted);
-  transition: all 0.3s;
-  z-index: 10;
-}
-.modal-close:hover { background: var(--text-rich); color: var(--bg); border-color: var(--text-rich); }
-
-.modal-image {
-  width: 100%; max-height: 50vh;
-  background: var(--paper-dark);
-  display: flex;
-  align-items: center; justify-content: center;
-  position: relative;
-  overflow: hidden;
-}
-.modal-image img {
-  width: 100%; height: 100%;
-  object-fit: contain;
-  max-height: 50vh;
-  display: block;
-}
-.modal-image .modal-image-bg {
-  position: absolute; inset: 0;
-  background: repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.02) 2px,rgba(0,0,0,0.02) 3px);
-  pointer-events: none;
-}
-
-.modal-body { padding: 2rem 2.5rem 2.5rem; }
-.modal-header { margin-bottom: 1.5rem; }
-.modal-era {
-  font-family: var(--font-mono); font-size: 0.65rem;
-  color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em;
-  margin-bottom: 0.5rem;
-}
-.modal-title {
-  font-family: var(--font-serif); font-size: clamp(1.8rem, 3vw, 2.4rem);
-  font-weight: 400; line-height: 1.15; margin-bottom: 0.5rem;
-}
-.modal-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem; }
-.modal-tag {
-  font-family: var(--font-mono); font-size: 0.55rem;
-  text-transform: uppercase; letter-spacing: 0.08em;
-  padding: 0.2rem 0.6rem;
-  border: 1px solid var(--border);
-  color: var(--text-muted);
-}
-
-.modal-description p {
-  font-size: 0.95rem; line-height: 1.7; color: var(--text-rich);
-  margin-bottom: 1rem;
-}
-
-.modal-meta {
-  display: grid; grid-template-columns: 1fr 1fr 1fr;
-  gap: 1rem; margin-top: 1.5rem; padding-top: 1.5rem;
-  border-top: 1px solid var(--border);
-}
-.modal-meta-label {
-  font-family: var(--font-mono); font-size: 0.55rem;
-  text-transform: uppercase; letter-spacing: 0.12em;
-  color: var(--text-faint); margin-bottom: 0.2rem;
-}
-.modal-meta-value {
-  font-size: 0.8rem; color: var(--text-muted);
-}
-
-.modal-source {
-  margin-top: 1rem; padding: 1rem 1.25rem;
-  background: var(--paper);
-}
-.modal-source-label {
-  font-family: var(--font-mono); font-size: 0.55rem;
-  text-transform: uppercase; letter-spacing: 0.15em;
-  color: var(--accent); margin-bottom: 0.3rem;
-}
-.modal-source-text {
-  font-size: 0.75rem; color: var(--text-muted); line-height: 1.5;
-}
-.modal-source-text a {
-  color: var(--accent); text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-.modal-curator {
-  margin-top: 1.5rem; padding: 1.25rem 1.5rem;
-  background: var(--paper);
-  border-left: 2px solid var(--accent);
-}
-.modal-curator-label {
-  font-family: var(--font-mono); font-size: 0.55rem;
-  text-transform: uppercase; letter-spacing: 0.15em;
-  color: var(--accent); margin-bottom: 0.35rem;
-}
-.modal-curator-note {
-  font-family: var(--font-serif); font-style: italic;
-  font-size: 0.95rem; color: var(--text-muted); line-height: 1.5;
-}
+#three-hint{position:absolute;top:2rem;left:50%;transform:translateX(-50%);z-index:10;font-family:var(--font-mono);font-size:.55rem;text-transform:uppercase;letter-spacing:.2em;color:rgba(255,255,255,.2);pointer-events:none;transition:opacity .8s}
+#three-enter-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;padding:.85rem 2rem;border:1px solid rgba(255,255,255,.2);background:transparent;font-family:var(--font-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.2em;color:white;cursor:pointer;transition:all .5s;opacity:0;pointer-events:none}
+#three-enter-btn:hover{background:white;color:#1a1817}
+#three-enter-btn.visible{opacity:1;pointer-events:auto}
+#three-loader{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:5;color:rgba(255,255,255,.15);font-family:var(--font-mono);font-size:.6rem;text-transform:uppercase;letter-spacing:.3em}
 
 /* divider */
-.divider { display: flex; align-items: center; gap: 1rem; max-width: 160px; margin: 0 auto; padding: 0 2rem; }
-.divider-line { flex: 1; height: 1px; background: var(--border); }
-.divider-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--accent); }
+.divider{display:flex;align-items:center;gap:1rem;max-width:160px;margin:0 auto;padding:0 2rem}
+.divider-line{flex:1;height:1px;background:var(--border)}
+.divider-dot{width:4px;height:4px;border-radius:50%;background:var(--accent)}
 
 /* submit section */
-.submit-section {
-  max-width: 720px; margin: 0 auto;
-  padding: 5rem 2rem 6rem;
-  text-align: center;
-}
-.submit-section h2 {
-  font-family: var(--font-serif); font-size: clamp(1.8rem, 4vw, 2.6rem);
-  font-weight: 400; margin-bottom: 0.75rem;
-}
-.submit-section .submit-intro {
-  color: var(--text-muted); font-size: 0.95rem;
-  max-width: 500px; margin: 0 auto 2.5rem;
-}
-
-.submit-form {
-  text-align: left;
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 1.25rem;
-}
-.submit-form .full-width { grid-column: 1 / -1; }
-
-.form-label {
-  display: block;
-  font-family: var(--font-mono); font-size: 0.6rem;
-  text-transform: uppercase; letter-spacing: 0.12em;
-  color: var(--text-muted); margin-bottom: 0.4rem;
-}
-.form-label .required { color: var(--accent); }
-.form-input, .form-select, .form-textarea {
-  width: 100%;
-  background: var(--paper);
-  border: 1px solid var(--border);
-  padding: 0.65rem 0.9rem;
-  font-family: var(--font-sans);
-  font-size: 0.9rem;
-  color: var(--text-rich);
-  transition: border-color 0.3s;
-  outline: none;
-}
-.form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent); }
-.form-textarea { min-height: 120px; resize: vertical; line-height: 1.5; }
-.form-select {
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237a7068' stroke-width='1' fill='none'/%3E%3C/svg%3E");
-  background-repeat: no-repeat; background-position: right 0.75rem center;
-  background-size: 10px;
-}
-.form-file-wrapper { position: relative; }
-.form-file-input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-.form-file-label {
-  display: flex; align-items: center; gap: 0.75rem;
-  padding: 0.65rem 0.9rem;
-  background: var(--paper);
-  border: 1px solid var(--border);
-  border-style: dashed;
-  font-size: 0.8rem;
-  color: var(--text-faint);
-  cursor: pointer;
-}
-.form-file-label:hover { border-color: var(--accent); }
-.form-file-icon { font-size: 1rem; }
-
-.form-submit {
-  grid-column: 1 / -1;
-  padding: 0.85rem 2rem;
-  background: var(--text-rich);
-  border: none;
-  color: var(--bg);
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-.form-submit:hover { background: var(--accent-deep); }
-.form-submit:disabled { opacity: 0.3; cursor: not-allowed; }
-
-.submit-success {
-  display: none;
-  padding: 3rem 2rem;
-  text-align: center;
-}
-.submit-success.visible { display: block; }
-.submit-success-icon {
-  width: 48px; height: 48px;
-  border: 2px solid var(--sage);
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  margin: 0 auto 1rem;
-  font-size: 1.3rem; color: var(--sage);
-}
-.submit-success h3 {
-  font-family: var(--font-serif);
-  font-size: 1.4rem; font-weight: 400;
-  margin-bottom: 0.5rem;
-}
-.submit-success p { color: var(--text-muted); font-size: 0.9rem; }
+.submit-section{max-width:720px;margin:0 auto;padding:5rem 2rem 6rem;text-align:center}
+.submit-section h2{font-family:var(--font-serif);font-size:clamp(1.8rem,4vw,2.6rem);font-weight:400;margin-bottom:.75rem}
+.submit-section .submit-intro{color:var(--text-muted);font-size:.95rem;max-width:500px;margin:0 auto 2.5rem}
+.submit-form{text-align:left;display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+.submit-form .full-width{grid-column:1/-1}
+.form-label{display:block;font-family:var(--font-mono);font-size:.6rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);margin-bottom:.4rem}
+.form-label .required{color:var(--accent)}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--paper);border:1px solid var(--border);padding:.65rem .9rem;font-family:var(--font-sans);font-size:.9rem;color:var(--text-rich);transition:border-color .3s;outline:none}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent)}
+.form-textarea{min-height:120px;resize:vertical;line-height:1.5}
+.form-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237a7068' stroke-width='1' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .75rem center;background-size:10px}
+.form-file-wrapper{position:relative}
+.form-file-input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.form-file-label{display:flex;align-items:center;gap:.75rem;padding:.65rem .9rem;background:var(--paper);border:1px solid var(--border);border-style:dashed;font-size:.8rem;color:var(--text-faint);cursor:pointer}
+.form-file-label:hover{border-color:var(--accent)}
+.form-submit{grid-column:1/-1;padding:.85rem 2rem;background:var(--text-rich);border:none;color:var(--bg);font-family:var(--font-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.2em;cursor:pointer;transition:all .3s}
+.form-submit:hover{background:var(--accent-deep)}
+.submit-success{display:none;padding:3rem 2rem;text-align:center}
+.submit-success.visible{display:block}
+.submit-success-icon{width:48px;height:48px;border:2px solid var(--sage);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:1.3rem;color:var(--sage)}
+.submit-success h3{font-family:var(--font-serif);font-size:1.4rem;font-weight:400;margin-bottom:.5rem}
+.submit-success p{color:var(--text-muted);font-size:.9rem}
 
 /* footer */
-footer {
-  text-align: center; padding: 3rem 2rem;
-  border-top: 1px solid var(--border); margin: 0 2rem;
-}
-footer p {
-  font-family: var(--font-serif); font-style: italic;
-  font-size: 1rem; color: var(--text-muted); margin-bottom: 0.5rem;
-}
-footer .footer-mono {
-  font-family: var(--font-mono); font-size: 0.6rem;
-  text-transform: uppercase; letter-spacing: 0.15em;
-  color: var(--text-faint); font-style: normal;
-}
+footer{text-align:center;padding:3rem 2rem;border-top:1px solid var(--border);margin:0 2rem}
+footer p{font-family:var(--font-serif);font-style:italic;font-size:1rem;color:var(--text-muted);margin-bottom:.5rem}
+footer .footer-mono{font-family:var(--font-mono);font-size:.6rem;text-transform:uppercase;letter-spacing:.15em;color:var(--text-faint);font-style:normal}
 
 /* reveal */
-.reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
-.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal{opacity:0;transform:translateY(30px);transition:all .8s cubic-bezier(.25,.46,.45,.94)}
+.reveal.visible{opacity:1;transform:translateY(0)}
 
-/* responsive */
-@media (max-width: 768px) {
-  nav { padding: 1rem 1.25rem; }
-  .nav-title { font-size: 0.85rem; }
-  .nav-link { font-size: 0.55rem; }
-  .hero { padding: 5rem 1.5rem 3rem; min-height: 85vh; }
-  .hero-badge { font-size: 0.5rem; padding: 0.3rem 0.75rem; }
-  .manifesto { padding: 3rem 1.5rem; }
-  .lobby { padding: 3rem 1.25rem; }
-  .lobby-header { margin-bottom: 2rem; }
-  .lobby-grid { grid-template-columns: 1fr; gap: 1rem; }
-  .lobby-card { padding: 1.5rem; }
-  .gallery-room { padding: 3rem 1.25rem 1.5rem; }
-  .gallery-room-inner { flex-direction: column; gap: 0.5rem; }
-  .gallery-number { font-size: 2.5rem; }
-  .gallery-exhibits { grid-template-columns: 1fr; gap: 1rem; padding: 1.5rem 1.25rem 3rem; }
-  .modal-body { padding: 1.25rem; }
-  .modal-image { max-height: 35vh; }
-  .modal-image img { max-height: 35vh; }
-  .modal-meta { grid-template-columns: 1fr 1fr; }
-  .submit-form { grid-template-columns: 1fr; }
-  .submit-section { padding: 3rem 1.25rem 4rem; }
-  footer { margin: 0 1.25rem; padding: 2rem 1.25rem; }
-  .modal-close { top: 0.75rem; right: 0.75rem; width: 2rem; height: 2rem; font-size: 1rem; }
-  .gallery-indicator { bottom: 1rem; padding: 0.5rem 1rem; gap: 1rem; }
-  .gi-label { font-size: 0.5rem; }
-}
+/* modal */
+.modal-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:all .5s cubic-bezier(.25,.46,.45,.94);padding:2rem;overflow-y:auto}
+.modal-overlay.active{opacity:1;visibility:visible}
+.modal{background:var(--bg);max-width:900px;width:100%;max-height:90vh;overflow-y:auto;position:relative;transform:translateY(40px) scale(.97);transition:all .5s cubic-bezier(.25,.46,.45,.94)}
+.modal-overlay.active .modal{transform:translateY(0) scale(1)}
+.modal-close{position:fixed;top:1.25rem;right:1.25rem;width:2.5rem;height:2.5rem;border:1px solid var(--border);background:var(--bg);cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:var(--font-sans);font-size:1.2rem;color:var(--text-muted);transition:all .3s;z-index:10}
+.modal-close:hover{background:var(--text-rich);color:var(--bg);border-color:var(--text-rich)}
+.modal-image{width:100%;max-height:50vh;background:var(--paper-dark);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.modal-image img{width:100%;height:100%;object-fit:contain;max-height:50vh;display:block}
+.modal-image .modal-image-bg{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.02) 2px,rgba(0,0,0,.02) 3px);pointer-events:none}
+.modal-body{padding:2rem 2.5rem 2.5rem}
+.modal-header{margin-bottom:1.5rem}
+.modal-era{font-family:var(--font-mono);font-size:.65rem;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem}
+.modal-title{font-family:var(--font-serif);font-size:clamp(1.8rem,3vw,2.4rem);font-weight:400;line-height:1.15;margin-bottom:.5rem}
+.modal-tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1rem}
+.modal-tag{font-family:var(--font-mono);font-size:.55rem;text-transform:uppercase;letter-spacing:.08em;padding:.2rem .6rem;border:1px solid var(--border);color:var(--text-muted)}
+.modal-description p{font-size:.95rem;line-height:1.7;color:var(--text-rich);margin-bottom:1rem}
+.modal-meta{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--border)}
+.modal-meta-label{font-family:var(--font-mono);font-size:.55rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text-faint);margin-bottom:.2rem}
+.modal-meta-value{font-size:.8rem;color:var(--text-muted)}
+.modal-source{margin-top:1rem;padding:1rem 1.25rem;background:var(--paper)}
+.modal-source-label{font-family:var(--font-mono);font-size:.55rem;text-transform:uppercase;letter-spacing:.15em;color:var(--accent);margin-bottom:.3rem}
+.modal-source-text{font-size:.75rem;color:var(--text-muted);line-height:1.5}
+.modal-source-text a{color:var(--accent);text-decoration:underline;text-underline-offset:2px}
+.modal-curator{margin-top:1.5rem;padding:1.25rem 1.5rem;background:var(--paper);border-left:2px solid var(--accent)}
+.modal-curator-label{font-family:var(--font-mono);font-size:.55rem;text-transform:uppercase;letter-spacing:.15em;color:var(--accent);margin-bottom:.35rem}
+.modal-curator-note{font-family:var(--font-serif);font-style:italic;font-size:.95rem;color:var(--text-muted);line-height:1.5}
 
-@media (min-width: 769px) and (max-width: 1024px) {
-  .gallery-exhibits { grid-template-columns: repeat(2, 1fr); }
-  .lobby-grid { grid-template-columns: repeat(2, 1fr); }
-}
-
-@media (min-width: 1280px) {
-  .gallery-exhibits { grid-template-columns: repeat(3, 1fr); }
-  .lobby-grid { grid-template-columns: repeat(4, 1fr); }
+@media(max-width:768px){
+  nav{padding:1rem 1.25rem}
+  .nav-title{font-size:.85rem}
+  .hero{padding:5rem 1.5rem 7rem;min-height:85vh}
+  .hero-badge{font-size:.5rem;padding:.3rem .75rem}
+  .manifesto{padding:3rem 1.5rem}
+  #three-section{height:90vh}
+  #three-ui{bottom:1rem;padding:.5rem 1rem;gap:1rem}
+  #three-ui .gi-label{font-size:.5rem}
+  .modal-body{padding:1.25rem}
+  .modal-image{max-height:35vh}
+  .modal-image img{max-height:35vh}
+  .modal-meta{grid-template-columns:1fr 1fr}
+  .submit-form,.submit-section{grid-template-columns:1fr}
+  .submit-section{padding:3rem 1.25rem 4rem}
+  footer{margin:0 1.25rem;padding:2rem 1.25rem}
+  .modal-close{top:.75rem;right:.75rem;width:2rem;height:2rem;font-size:1rem}
 }
 </style>
 </head>
 <body>
-
-<div class="scroll-track"><div class="scroll-thumb" id="scrollThumb"></div></div>
-<div class="scroll-label" id="scrollLabel">Lobby</div>
-
-<!-- gallery indicator -->
-<div class="gallery-indicator" id="galleryIndicator">
-  <button class="gi-arrow" id="giPrev" aria-label="Previous gallery">&larr;</button>
-  <span class="gi-label">You are in: <span id="giCurrent">Lobby</span></span>
-  <button class="gi-arrow" id="giNext" aria-label="Next gallery">&rarr;</button>
-</div>
 
 <nav>
   <span class="nav-title">The Human Archive</span>
@@ -669,7 +176,7 @@ footer .footer-mono {
   <div class="hero-badge">The Analog Era &mdash; c. 300,000 BCE &ndash; 2022 CE</div>
   <h1 class="hero-title">The Human<br>Archive</h1>
   <p class="hero-subtitle">Preserving what we made before the machines learned to think</p>
-  <button class="hero-cta" onclick="document.getElementById('lobby').scrollIntoView({behavior:'smooth'})">
+  <button class="hero-cta" onclick="document.getElementById('three-section').scrollIntoView({behavior:'smooth'})">
     Enter the Museum
     <span>&#8595;</span>
   </button>
@@ -681,99 +188,39 @@ footer .footer-mono {
 
 <!-- MANIFESTO -->
 <section class="manifesto reveal">
-  <p>
-    Before the machines learned to think, humans made things with their hands. They wrote letters on paper, wound their watches, and got lost without asking for directions.
-  </p>
-  <p>
-    This is an archive of what we almost lost. A museum of artifacts from the analog era &mdash; each one carrying the weight of human intention, imperfection, and care.
-  </p>
-  <p>
-    We preserve these objects not because they are useful, but because they are evidence of who we were.
-  </p>
+  <p>Before the machines learned to think, humans made things with their hands. They wrote letters on paper, wound their watches, and got lost without asking for directions.</p>
+  <p>This is an archive of what we almost lost. A museum of artifacts from the analog era &mdash; each one carrying the weight of human intention, imperfection, and care.</p>
+  <p>We preserve these objects not because they are useful, but because they are evidence of who we were.</p>
   <p class="attribution">&mdash; Curatorial Statement</p>
 </section>
 
 <div class="divider"><span class="divider-line"></span><span class="divider-dot"></span><span class="divider-line"></span></div>
 
-<!-- LOBBY -->
-<section id="lobby" class="lobby reveal">
-  <div class="lobby-header">
-    <h2>Museum Directory</h2>
-    <p>Select a gallery to enter. Each room contains artifacts from a different aspect of analog life.</p>
-  </div>
-  <div class="lobby-grid">
-    <div class="lobby-card" data-gallery="0">
-      <span class="lc-number">I</span>
-      <span class="lc-label">Gallery</span>
-      <h3 class="lc-name">The Correspondence Room</h3>
-      <p class="lc-desc">Words carried across distances by hand and heart. Before instant messaging, there was ink, paper, and the long wait for a reply.</p>
-      <span class="lc-enter">Enter &rarr;</span>
-    </div>
-    <div class="lobby-card" data-gallery="1">
-      <span class="lc-number">II</span>
-      <span class="lc-label">Gallery</span>
-      <h3 class="lc-name">The Memory Chamber</h3>
-      <p class="lc-desc">Light captured and preserved. Before infinite storage, every photograph was a choice, a risk, a moment that could not be retaken.</p>
-      <span class="lc-enter">Enter &rarr;</span>
-    </div>
-    <div class="lobby-card" data-gallery="2">
-      <span class="lc-number">III</span>
-      <span class="lc-label">Gallery</span>
-      <h3 class="lc-name">The Music Lounge</h3>
-      <p class="lc-desc">Sound made physical. Before streaming, music was something you held in your hands, read the liner notes, and cared for like a living thing.</p>
-      <span class="lc-enter">Enter &rarr;</span>
-    </div>
-    <div class="lobby-card" data-gallery="3">
-      <span class="lc-number">IV</span>
-      <span class="lc-label">Gallery</span>
-      <h3 class="lc-name">The Kitchen Archive</h3>
-      <p class="lc-desc">Recipes handwritten on index cards, stained with butter and chocolate. Cooking was memory passed down through splattered pages.</p>
-      <span class="lc-enter">Enter &rarr;</span>
-    </div>
-    <div class="lobby-card" data-gallery="4">
-      <span class="lc-number">V</span>
-      <span class="lc-label">Gallery</span>
-      <h3 class="lc-name">The Cartography Hall</h3>
-      <p class="lc-desc">Before GPS, you navigated by paper, memory, and the kindness of strangers. Getting lost was part of the journey.</p>
-      <span class="lc-enter">Enter &rarr;</span>
-    </div>
-    <div class="lobby-card" data-gallery="5">
-      <span class="lc-number">VI</span>
-      <span class="lc-label">Gallery</span>
-      <h3 class="lc-name">The Personal Vault</h3>
-      <p class="lc-desc">The things we kept hidden, sealed, and wrote only for ourselves. No audience but time.</p>
-      <span class="lc-enter">Enter &rarr;</span>
-    </div>
-    <div class="lobby-card" data-gallery="6">
-      <span class="lc-number">VII</span>
-      <span class="lc-label">Gallery</span>
-      <h3 class="lc-name">The Collectors' Corner</h3>
-      <p class="lc-desc">The things we kept just because. Ticket stubs, stamps, ephemera that meant nothing to anyone but us.</p>
-      <span class="lc-enter">Enter &rarr;</span>
-    </div>
+<!-- 3D MUSEUM -->
+<section id="three-section">
+  <div id="three-loader">Loading Museum&hellip;</div>
+  <div id="three-enter-btn">Enter &rarr;</div>
+  <div id="three-hint">&#8592; Navigate galleries with arrow keys &#8594;</div>
+  <canvas id="three-canvas"></canvas>
+  <div id="three-ui">
+    <button class="gi-arrow" id="navPrev" aria-label="Previous gallery">&larr;</button>
+    <span class="gi-label">You are in: <span id="galleryName">Loading</span></span>
+    <span class="gi-count" id="galleryCount"></span>
+    <button class="gi-arrow" id="navNext" aria-label="Next gallery">&rarr;</button>
   </div>
 </section>
 
-<div class="divider"><span class="divider-line"></span><span class="divider-dot"></span><span class="divider-line"></span></div>
-
-<!-- GALLERY ROOMS + EXHIBITS rendered by JS -->
-<div id="galleryContainer"></div>
-
-<div class="divider"><span class="divider-line"></span><span class="divider-dot"></span><span class="divider-line"></span></div>
+<div class="divider" id="after-museum"><span class="divider-line"></span><span class="divider-dot"></span><span class="divider-line"></span></div>
 
 <!-- SUBMISSION -->
 <section class="submit-section" id="submit">
   <h2>Contribute to the Archive</h2>
-  <p class="submit-intro">
-    Do you have an analog artifact that should be preserved? Submit it for curatorial review. We accept submissions from anyone who holds a piece of human history.
-  </p>
-
+  <p class="submit-intro">Do you have an analog artifact that should be preserved? Submit it for curatorial review. We accept submissions from anyone who holds a piece of human history.</p>
   <div class="submit-success" id="submitSuccess">
     <div class="submit-success-icon">&#10003;</div>
     <h3>Submission received</h3>
     <p>Your artifact has been submitted for curatorial review. If selected, it will be added to the permanent collection. Thank you for helping us remember.</p>
   </div>
-
   <form class="submit-form" id="submitForm">
     <div class="form-group full-width">
       <label class="form-label" for="artName">Artifact Name <span class="required">*</span></label>
@@ -833,7 +280,7 @@ footer .footer-mono {
   <span class="footer-mono">The Human Archive &mdash; A Digital Museum of Analog Life &mdash; Est. 2026</span>
 </footer>
 
-<!-- MODAL OVERLAY -->
+<!-- MODAL -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal" id="modalContent">
     <button class="modal-close" id="modalClose">&#10005;</button>
@@ -850,7 +297,7 @@ footer .footer-mono {
       <div class="modal-description" id="modalDesc"></div>
       <div class="modal-meta" id="modalMeta"></div>
       <div class="modal-source" id="modalSource">
-        <p class="modal-source-label">Public Domain Source</p>
+        <p class="modal-source-label">CC0 Licensed Source</p>
         <p class="modal-source-text" id="modalSourceText"></p>
       </div>
       <div class="modal-curator">
@@ -861,316 +308,209 @@ footer .footer-mono {
   </div>
 </div>
 
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.181.2/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/"
+  }
+}
+</script>
+
 <script>
-// DATA
+// Gallery data (shared between 2D modal and 3D scene)
 const galleries = [
   {
     num: 'I', name: 'The Correspondence Room',
-    desc: 'Words carried across distances by hand and heart. Before instant messaging, there was ink, paper, and the long wait for a reply.',
+    desc: 'Words carried across distances by hand and heart.',
     exhibits: [
       {
-        id: 1, title: 'Handwritten Letters',
-        era: 'c. 2400 BCE &mdash; Present',
+        id: 1, title: 'Handwritten Letters', era: 'c. 2400 BCE &mdash; Present',
         category: 'Correspondence', tags: ['Paper', 'Ink', 'Wax Seal'],
-        desc: 'Correspondence carried across continents by ship, train, and foot. Each stroke of ink carried the weight of intention, the particular slant of a person\'s hand.',
-        fullDesc: [
-          'Before email, before SMS, there was the letter. You sat down with a blank sheet, a pen, and the full weight of what you wanted to say. There was no delete key, no undo. Every word was chosen with care because every word cost something &mdash; paper, postage, time.',
-          'Letters crossed oceans on ships, traveled weeks overland by rail, and arrived smelling of distant places. The handwriting told you everything: the hurry, the hesitation, the tear that smudged the ink.'
-        ],
+        desc: 'Correspondence carried across continents by ship, train, and foot. Each stroke of ink carried the weight of intention.',
+        fullDesc: ['Before email, before SMS, there was the letter. You sat down with a blank sheet, a pen, and the full weight of what you wanted to say. There was no delete key, no undo. Every word was chosen with care because every word cost something &mdash; paper, postage, time.', 'Letters crossed oceans on ships, traveled weeks overland by rail, and arrived smelling of distant places. The handwriting told you everything: the hurry, the hesitation, the tear that smudged the ink.'],
         curatorNote: 'A letter always arrives too early or too late. But when it arrives, it arrives as a physical piece of someone, folded into an envelope.',
         materials: 'Paper, iron gall ink, wax seal', origin: 'Universal', dimensions: 'Variable',
-        mediaUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Bixby_letter_facsimile.jpg?width=800',
-        mediaType: 'image',
-        source: 'Wikimedia Commons — The Bixby Letter, Abraham Lincoln (1864). Public domain via the Gilder Lehrman Institute.',
-        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Bixby_letter_facsimile.jpg'
+        mediaUrl: 'https://upload.wikimedia.org/wikipedia/commons/b/b3/Letter_about_her_1st_Holy_Communion_%281941%29.jpg',
+        source: 'Wikimedia Commons — Personal letter about 1st Holy Communion (1941). CC0 1.0 Universal.',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Letter_about_her_1st_Holy_Communion_(1941).jpg'
       },
       {
-        id: 2, title: 'Love Letters',
-        era: 'c. 1700 BCE &mdash; 2000s',
+        id: 2, title: 'Love Letters', era: 'c. 1700 BCE &mdash; Present',
         category: 'Correspondence', tags: ['Romance', 'Paper', 'Seal'],
         desc: 'Written on aerogrammes, hidden in desks, pressed between books. Every word was chosen knowing it could not be unsent.',
-        fullDesc: [
-          'The love letter is perhaps the most human of all artifacts. It requires vulnerability, patience, and the willingness to commit feeling to paper with no guarantee of return.',
-          'Letters took days or weeks to arrive. Absence was measured in mail deliveries, not notification badges. The weight of paper carried the weight of feeling.'
-        ],
+        fullDesc: ['The love letter is perhaps the most human of all artifacts. It requires vulnerability, patience, and the willingness to commit feeling to paper with no guarantee of return.', 'Letters took days or weeks to arrive. Absence was measured in mail deliveries, not notification badges. The weight of paper carried the weight of feeling.'],
         curatorNote: 'I wrote to you every day for a year. You kept every one.',
         materials: 'Paper, ink, sealing wax, ribbon', origin: 'Universal', dimensions: 'Variable',
-        mediaUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Letter_from_Leonardo_da_Vinci_to_Ludovico_Sforza.jpg?width=800',
-        mediaType: 'image',
-        source: 'Wikimedia Commons — Leonardo da Vinci\'s letter to Ludovico Sforza (1482). Public domain.',
-        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Letter_from_Leonardo_da_Vinci_to_Ludovico_Sforza.jpg'
+        mediaUrl: 'https://upload.wikimedia.org/wikipedia/commons/7/77/Madge_Clifford_letter%2C_6_September_1953.jpg',
+        source: 'Wikimedia Commons — Madge Clifford letter (1953). CC0 1.0 Universal.',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Madge_Clifford_letter,_6_September_1953.jpg'
       },
       {
-        id: 3, title: 'Postcards from Afar',
-        era: 'c. 1869 &mdash; Present',
+        id: 3, title: 'Postcards from Afar', era: 'c. 1869 &mdash; Present',
         category: 'Correspondence', tags: ['Travel', 'Postage', 'Ephemera'],
         desc: 'A brief message from somewhere far away. Limited space meant every word counted. Wish you were here.',
-        fullDesc: [
-          'Postcards were the tweet of their era &mdash; short, public, and designed to make the recipient envious. The picture side showed a place they had never been; the message side said just enough to make them wish they were there.',
-          'Collected in shoeboxes and albums, postcards are a cartography of human connection, mapping who knew whom and where they went.'
-        ],
+        fullDesc: ['Postcards were the tweet of their era &mdash; short, public, and designed to make the recipient envious. The picture side showed a place they had never been; the message side said just enough to make them wish they were there.', 'Collected in shoeboxes and albums, postcards are a cartography of human connection, mapping who knew whom and where they went.'],
         curatorNote: 'The postcard is a promise: I am somewhere you are not, and I am thinking of you.',
         materials: 'Cardstock, ink, postage stamp', origin: 'Universal', dimensions: '14 x 9 cm (standard)',
-        mediaUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Steamer_Tahoe%2C_Lake_Tahoe.jpg?width=800',
-        mediaType: 'image',
-        source: 'Wikimedia Commons — Steamer Tahoe postcard, Lake Tahoe (1910). Public domain.',
-        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Steamer_Tahoe,_Lake_Tahoe.jpg'
+        mediaUrl: 'https://upload.wikimedia.org/wikipedia/commons/b/b6/01428-T%C3%BCrmitz-1900-Gru%C3%9F_vom_Mohnmuschel-Markt-Br%C3%BCck_%26_Sohn_Kunstverlag.jpg',
+        source: 'Wikimedia Commons — Türmitz market scene postcard (1900). CC0 1.0 Universal.',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:01428-T%C3%BCrmitz-1900-Gru%C3%9F_vom_Mohnmuschel-Markt-Br%C3%BCck_%26_Sohn_Kunstverlag.jpg'
       }
     ]
   },
   {
-    num: 'II', name: 'The Memory Chamber',
-    desc: 'Light captured and preserved. Before infinite storage, every photograph was a choice, a risk, a moment that could not be retaken.',
+    num: 'II', name: 'The Memory Chamber', desc: 'Light captured and preserved.',
     exhibits: [
       {
-        id: 4, title: 'Polaroid Photographs',
-        era: '1948 &mdash; Present',
+        id: 4, title: 'Polaroid Photographs', era: '1948 &mdash; Present',
         category: 'Photography', tags: ['Instant', 'Analog', 'SX-70'],
-        desc: 'An image that developed before your eyes. Impermanent, imperfect, irreplaceable. You could shake it to make it dry faster, though that was always a myth.',
-        fullDesc: [
-          'There was a white border around every memory. You watched the image bloom from gray nothingness, waiting for the chemicals to settle. No zoom, no review, no delete.',
-          'Each Polaroid was unique. If you wanted a copy, you took another picture. The margins held thumbprints, date stamps, and the gentle fading of time.'
-        ],
+        desc: 'An image that developed before your eyes. Impermanent, imperfect, irreplaceable.',
+        fullDesc: ['There was a white border around every memory. You watched the image bloom from gray nothingness, waiting for the chemicals to settle. No zoom, no review, no delete.', 'Each Polaroid was unique. If you wanted a copy, you took another picture. The margins held thumbprints, date stamps, and the gentle fading of time.'],
         curatorNote: 'No filters. No retakes. Just a single frame of captured light.',
         materials: 'Instant film, plastic casing, chemical emulsion', origin: 'Cambridge, Massachusetts', dimensions: '10.8 x 8.8 cm',
-        mediaUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Polaroid_SX-70_%284462345243%29.jpg?width=800',
-        mediaType: 'image',
-        source: 'Wikimedia Commons — Polaroid SX-70 Land Camera (CC0).',
+        mediaUrl: 'https://upload.wikimedia.org/wikipedia/commons/f/f2/Polaroid_SX-70_%284462345243%29.jpg',
+        source: 'Wikimedia Commons — Polaroid SX-70 Land Camera. CC0 1.0 Universal.',
         sourceUrl: 'https://commons.wikimedia.org/wiki/File:Polaroid_SX-70_(4462345243).jpg'
       },
       {
-        id: 5, title: 'Film Photography',
-        era: '1888 &mdash; 2010s',
+        id: 5, title: 'Film Photography', era: '1888 &mdash; 2010s',
         category: 'Photography', tags: ['35mm', 'Analog', 'Darkroom'],
-        desc: 'Twenty-four or thirty-six frames per roll. Every click cost money and counted. You composed carefully and waited for the light.',
-        fullDesc: [
-          'The anticipation of the developed roll is a lost form of suspense. You shot a whole roll, dropped it at the lab, and waited a week. When you opened the envelope, every frame was a surprise.',
-          'Some were overexposed, some were blurry, some were accidental masterpieces. The failures cost you just as much as the successes.'
-        ],
+        desc: 'Twenty-four or thirty-six frames per roll. Every click cost money and counted.',
+        fullDesc: ['The anticipation of the developed roll is a lost form of suspense. You shot a whole roll, dropped it at the lab, and waited a week. When you opened the envelope, every frame was a surprise.', 'Some were overexposed, some were blurry, some were accidental masterpieces. The failures cost you just as much as the successes.'],
         curatorNote: 'The anticipation of the developed roll is a lost form of suspense.',
         materials: 'Celluloid film strip, silver halide emulsion', origin: 'Rochester, New York', dimensions: '35mm x 36 frames',
-        mediaUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/126_film_negative_strip_%28small%29.jpg?width=800',
-        mediaType: 'image',
-        source: 'Wikimedia Commons — 126 film negative strip (CC BY-SA 3.0).',
-        sourceUrl: 'https://commons.wikimedia.org/wiki/File:126_film_negative_strip_(small).jpg'
+        mediaUrl: 'https://upload.wikimedia.org/wikipedia/commons/c/ca/Undeveloped_35_mm_film.jpg',
+        source: 'Wikimedia Commons — Undeveloped 35mm film roll (Unsplash). CC0 1.0 Universal.',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Undeveloped_35_mm_film.jpg'
       },
       {
-        id: 6, title: 'The Family Album',
-        era: 'c. 1850 &mdash; 2010s',
+        id: 6, title: 'The Family Album', era: 'c. 1850 &mdash; Present',
         category: 'Photography', tags: ['Family', 'Memory', 'Archive'],
-        desc: 'Leather-bound books of printed photographs. The original social feed, curated by someone\'s mother, annotated in white pen.',
-        fullDesc: [
-          'Every family had one. A heavy book on a bottom shelf, filled with plastic sleeves and the collective memory of birthdays, holidays, and awkward haircuts.',
-          'You sat on the couch and flipped through it with someone who pointed and said, "That was the summer we..." The spine was cracked, the photos sticky, and every page smelled like nostalgia.'
-        ],
+        desc: 'Leather-bound books of printed photographs. The original social feed.',
+        fullDesc: ['Every family had one. A heavy book on a bottom shelf, filled with plastic sleeves and the collective memory of birthdays, holidays, and awkward haircuts.', 'You sat on the couch and flipped through it with someone who pointed and said, "That was the summer we..." The spine was cracked, the photos sticky, and every page smelled like nostalgia.'],
         curatorNote: 'The family album is our first encounter with the concept of an archive.',
         materials: 'Leather, cardstock, photographic paper', origin: 'Every home', dimensions: '30 x 25 cm (typical)',
-        mediaUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Sauk_Indian_family_by_Frank_Rinehart_1899.jpg?width=800',
-        mediaType: 'image',
-        source: 'Wikimedia Commons — Sauk Indian family by Frank Rinehart (1899). Public domain via Library of Congress.',
-        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Sauk_Indian_family_by_Frank_Rinehart_1899.jpg'
+        mediaUrl: 'https://upload.wikimedia.org/wikipedia/commons/4/4a/Andrew_Scheer_and_family_2017.jpg',
+        source: 'Wikimedia Commons — Family portrait (2017). CC0 1.0 Universal.',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Andrew_Scheer_and_family_2017.jpg'
       }
     ]
   },
   {
-    num: 'III', name: 'The Music Lounge',
-    desc: 'Sound made physical. Before streaming, music was something you held in your hands, read the liner notes, and cared for like a living thing.',
+    num: 'III', name: 'The Music Lounge', desc: 'Sound made physical.',
     exhibits: [
       {
-        id: 7, title: 'The Mixtape',
-        era: '1963 &mdash; 2000s',
+        id: 7, title: 'The Mixtape', era: '1963 &mdash; 2000s',
         category: 'Music', tags: ['Cassette', 'Curation', 'Analog'],
         desc: 'A curated sequence of songs recorded onto magnetic tape. An act of love, a declaration of taste.',
-        fullDesc: [
-          'Making a mixtape was a craft. You timed the gaps between songs, adjusted the recording levels, and prayed the DJ didn\'t talk over the intro. The best ones had handwritten covers folded from album art.',
-          'A mixtape told someone how you felt about them without saying a word. The song order was a narrative. The inclusion of a B-side was a message.'
-        ],
+        fullDesc: ['Making a mixtape was a craft. You timed the gaps between songs, adjusted the recording levels, and prayed the DJ didn\'t talk over the intro. The best ones had handwritten covers folded from album art.', 'A mixtape told someone how you felt about them without saying a word. The song order was a narrative. The inclusion of a B-side was a message.'],
         curatorNote: 'Each tape was a fingerprint of someone\'s emotional landscape.',
         materials: 'Magnetic tape, plastic shell, paper label', origin: 'Eindhoven, Netherlands', dimensions: '10 x 6.5 cm',
-        mediaUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Audio_cassette_tapes.jpg?width=800',
-        mediaType: 'image',
-        source: 'Wikimedia Commons — Audio cassette tapes (Public Domain).',
-        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Audio_cassette_tapes.jpg'
+        mediaUrl: 'https://upload.wikimedia.org/wikipedia/commons/0/0b/Cassette_Tape_(Unsplash).jpg',
+        source: 'Wikimedia Commons — Cassette tape (Unsplash). CC0 1.0 Universal.',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Cassette_Tape_(Unsplash).jpg'
       },
       {
-        id: 8, title: 'Vinyl Records',
-        era: '1948 &mdash; Present',
+        id: 8, title: 'Vinyl Records', era: '1948 &mdash; Present',
         category: 'Music', tags: ['Vinyl', 'Analog', 'Audiophile'],
         desc: 'Twelve inches of grooved vinyl. The ritual of placing the needle, the pop and crackle before the music began.',
-        fullDesc: [
-          'An album was an event. You took it out of the sleeve carefully, holding it by the edges. You cleaned it with a special brush. You lowered the tonearm with reverence.',
-          'Albums came with liner notes you actually read, artwork you actually looked at, and a sequence of songs designed to be heard in order. There was no shuffle.'
-        ],
+        fullDesc: ['An album was an event. You took it out of the sleeve carefully, holding it by the edges. You cleaned it with a special brush. You lowered the tonearm with reverence.', 'Albums came with liner notes you actually read, artwork you actually looked at, and a sequence of songs designed to be heard in order. There was no shuffle.'],
         curatorNote: 'The pop and crackle before the first note was the sound of anticipation.',
         materials: 'Vinyl, cardboard sleeve, inner sleeve', origin: 'Universal', dimensions: '30.5 cm diameter',
-        mediaUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/HMV_Record_Player_2.jpg?width=800',
-        mediaType: 'image',
-        source: 'Wikimedia Commons — HMV Record Player (CC0).',
-        sourceUrl: 'https://commons.wikimedia.org/wiki/File:HMV_Record_Player_2.jpg'
+        mediaUrl: 'https://upload.wikimedia.org/wikipedia/commons/a/a5/Technics_SL-1200MK5_Direct_Drive_Turntable_System_with_Ortofon_cartridge_(2017-01-21_22.33.27_piqsels.com_en).jpg',
+        source: 'Wikimedia Commons — Technics SL-1200 turntable (2017). CC0 1.0 Universal.',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Technics_SL-1200MK5_Direct_Drive_Turntable_System_with_Ortofon_cartridge_(2017-01-21_22.33.27_piqsels.com_en).jpg'
       }
     ]
   },
   {
-    num: 'IV', name: 'The Kitchen Archive',
-    desc: 'Recipes handwritten on index cards, stained with butter and chocolate. Cooking was memory passed down through splattered pages.',
+    num: 'IV', name: 'The Kitchen Archive', desc: 'Recipes stained with butter and chocolate.',
     exhibits: [
       {
-        id: 9, title: 'Recipe Cards',
-        era: 'Antiquity &mdash; Present',
+        id: 9, title: 'Recipe Cards', era: 'Antiquity &mdash; Present',
         category: 'Domestic', tags: ['Cooking', 'Handwriting', 'Heirloom'],
-        desc: 'Handwritten on index cards, stained with butter and chocolate. Measurements were approximate, instructions assumed knowledge.',
-        fullDesc: [
-          'The best recipes were never written down completely. "A pinch of this, a handful of that. You\'ll know when it\'s right." The cook knew more than the recipe told.',
-          'These cards passed through generations in recipe boxes. The stains were evidence of use. The faded ink was proof of love.'
-        ],
+        desc: 'Handwritten on index cards, stained with butter and chocolate. Measurements were approximate.',
+        fullDesc: ['The best recipes were never written down completely. "A pinch of this, a handful of that. You\'ll know when it\'s right." The cook knew more than the recipe told.', 'These cards passed through generations in recipe boxes. The stains were evidence of use. The faded ink was proof of love.'],
         curatorNote: '"A pinch of this, a handful of that. You\'ll know when it\'s right."',
         materials: 'Cardstock, ink, food stains', origin: 'Every kitchen', dimensions: '12.5 x 7.5 cm',
-        mediaUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Banbury_cheese_recipe%2C_Sloane_MS_1201.jpg?width=800',
-        mediaType: 'image',
-        source: 'Wikimedia Commons — Banbury cheese recipe, Sloane MS 1201 (15th-16th c.). Public domain via British Library.',
+        mediaUrl: 'https://upload.wikimedia.org/wikipedia/commons/a/ad/Banbury_cheese_recipe%2C_Sloane_MS_1201.jpg',
+        source: 'Wikimedia Commons — Banbury cheese recipe, Sloane MS 1201. CC0 1.0 Universal via British Library.',
         sourceUrl: 'https://commons.wikimedia.org/wiki/File:Banbury_cheese_recipe,_Sloane_MS_1201.jpg'
       }
     ]
   },
   {
-    num: 'V', name: 'The Cartography Hall',
-    desc: 'Before GPS, you navigated by paper, memory, and the kindness of strangers. Getting lost was part of the journey.',
+    num: 'V', name: 'The Cartography Hall', desc: 'Before GPS, you navigated by paper.',
     exhibits: [
       {
-        id: 10, title: 'Paper Maps',
-        era: 'Prehistory &mdash; 2010s',
+        id: 10, title: 'Paper Maps', era: 'Prehistory &mdash; 2010s',
         category: 'Navigation', tags: ['Cartography', 'Travel', 'Analog'],
         desc: 'Large sheets of folded paper that demanded you unfold your entire world to see where you were going.',
-        fullDesc: [
-          'A paper map was a commitment. You unfolded it in the middle of a street, turning it in your hands, trying to align the north arrow with the actual north. Someone always had to pull over.',
-          'You could draw on maps, highlight routes, and mark places you had been. They wore out at the folds, tore at the corners, and became relics of journeys taken.'
-        ],
+        fullDesc: ['A paper map was a commitment. You unfolded it in the middle of a street, turning it in your hands, trying to align the north arrow with the actual north. Someone always had to pull over.', 'You could draw on maps, highlight routes, and mark places you had been. They wore out at the folds, tore at the corners, and became relics of journeys taken.'],
         curatorNote: 'Getting lost was part of the journey. There was no recalculating.',
         materials: 'Paper, ink, laminate', origin: 'Universal', dimensions: '100 x 70 cm (unfolded)',
-        mediaUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Turgot_map_of_Paris_-_Norman_B._Leventhal_Map_Center.jpg?width=1200',
-        mediaType: 'image',
-        source: 'Wikimedia Commons — Turgot Map of Paris (1739). Public domain via Norman B. Leventhal Map Center / David Rumsey Collection.',
-        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Turgot_map_of_Paris_-_Norman_B._Leventhal_Map_Center.jpg'
+        mediaUrl: 'https://upload.wikimedia.org/wikipedia/commons/5/57/Roadmap.JPG',
+        source: 'Wikimedia Commons — Road map (CC0 1.0 Universal).',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Roadmap.JPG'
       }
     ]
   },
   {
-    num: 'VI', name: 'The Personal Vault',
-    desc: 'The things we kept hidden, sealed, and wrote only for ourselves. No audience but time.',
+    num: 'VI', name: 'The Personal Vault', desc: 'The things we kept hidden and wrote only for ourselves.',
     exhibits: [
       {
-        id: 11, title: 'The Private Diary',
-        era: 'c. 600 CE &mdash; Present',
+        id: 11, title: 'The Private Diary', era: 'c. 600 CE &mdash; Present',
         category: 'Personal', tags: ['Writing', 'Privacy', 'Reflection'],
         desc: 'Pages filled with uncensored thought, sealed with a tiny lock. The only reader was supposed to be yourself.',
-        fullDesc: [
-          'A diary was a conversation with no audience but yourself. You wrote what you could not say, confessed what you could not admit, and recorded the mundane details that would later become the texture of a vanished life.',
-          'The lock was symbolic. Anyone determined enough could break it. But the act of locking was the act of declaring this is mine and mine alone.'
-        ],
+        fullDesc: ['A diary was a conversation with no audience but yourself. You wrote what you could not say, confessed what you could not admit, and recorded the mundane details that would later become the texture of a vanished life.', 'The lock was symbolic. Anyone determined enough could break it. But the act of locking was the act of declaring: this is mine and mine alone.'],
         curatorNote: 'The diary is the only place where you can speak the truth. &mdash; Ana\u00efs Nin',
         materials: 'Paper, board, metal lock', origin: 'Universal', dimensions: 'Variable',
-        mediaUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Samuel_Hadlock%27s_Journal,_Europe,_1824-1826,_page_51_(ac0dd8d1-7ae7-46f7-9560-5bd906e18452).tif?width=800',
-        mediaType: 'image',
-        source: 'Wikimedia Commons — Samuel Hadlock\'s Journal, Europe, 1824-1826. Public domain via US National Park Service.',
-        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Samuel_Hadlock%27s_Journal,_Europe,_1824-1826,_page_51_(ac0dd8d1-7ae7-46f7-9560-5bd906e18452).tif'
+        mediaUrl: 'https://upload.wikimedia.org/wikipedia/commons/0/07/Writing_in_a_journal_%28Unsplash%29.jpg',
+        source: 'Wikimedia Commons — Writing in a journal (Unsplash). CC0 1.0 Universal.',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Writing_in_a_journal_(Unsplash).jpg'
       }
     ]
   },
   {
-    num: 'VII', name: 'The Collectors\' Corner',
-    desc: 'The things we kept just because. Ticket stubs, stamps, ephemera that meant nothing to anyone but us.',
+    num: 'VII', name: 'The Collectors\' Corner', desc: 'The things we kept just because.',
     exhibits: [
       {
-        id: 12, title: 'Concert Tickets',
-        era: 'c. 1700s &mdash; 2020s',
+        id: 12, title: 'Concert Tickets', era: 'c. 1700s &mdash; 2020s',
         category: 'Collections', tags: ['Music', 'Ephemera', 'Memory'],
-        desc: 'A physical proof that you were there. Often saved in shoeboxes, tucked into mirrors, or pinned to corkboards.',
-        fullDesc: [
-          'The ticket stub was a souvenir of a night that mattered. The fading ink, the torn perforation, the crumpled edge from being clutched in a sweaty hand all night.',
-          'You kept them in shoeboxes, in wallets, behind the plastic sleeve of your favorite album. Each one triggered a memory: who you were with, what the air felt like, the song they opened with.'
-        ],
+        desc: 'A physical proof that you were there. Often saved in shoeboxes, tucked into mirrors.',
+        fullDesc: ['The ticket stub was a souvenir of a night that mattered. The fading ink, the torn perforation, the crumpled edge from being clutched in a sweaty hand all night.', 'You kept them in shoeboxes, in wallets, behind the plastic sleeve of your favorite album. Each one triggered a memory: who you were with, what the air felt like, the song they opened with.'],
         curatorNote: 'You kept the stub. The digital ticket just disappears.',
         materials: 'Cardstock, thermal ink, perforated paper', origin: 'Universal', dimensions: 'Variable',
-        mediaUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Varsity_Show_ticket.jpg?width=800',
-        mediaType: 'image',
-        source: 'Wikimedia Commons — Varsity Show ticket, Columbia University (1904). Public domain.',
-        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Varsity_Show_ticket.jpg'
+        mediaUrl: 'https://upload.wikimedia.org/wikipedia/commons/3/3c/Bell_Biv_Devoe_concert_tour_1991_-_Stierch.jpg',
+        source: 'Wikimedia Commons — Bell Biv Devoe concert ticket (1991). CC0 1.0 Universal.',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Bell_Biv_Devoe_concert_tour_1991_-_Stierch.jpg'
       },
       {
-        id: 13, title: 'Stamp Collections',
-        era: '1840 &mdash; Present',
+        id: 13, title: 'Stamp Collections', era: '1840 &mdash; Present',
         category: 'Collections', tags: ['Postage', 'Philately', 'Ephemera'],
-        desc: 'Small rectangles of adhesive paper that carried letters across the world. Collected for their beauty, history, and tiny perfection.',
-        fullDesc: [
-          'Stamp collecting was called the "king of hobbies and the hobby of kings." Each stamp was a miniature work of art, a piece of a country\'s pride, a record of history in miniature.',
-          'Arranged in albums with hinged mounts, stamps taught geography, history, and design. The rarest ones were worth fortunes; the most cherished ones were often the simplest.'
-        ],
+        desc: 'Small rectangles of adhesive paper that carried letters across the world. Collected for their beauty and history.',
+        fullDesc: ['Stamp collecting was called the "king of hobbies and the hobby of kings." Each stamp was a miniature work of art, a piece of a country\'s pride, a record of history in miniature.', 'Arranged in albums with hinged mounts, stamps taught geography, history, and design. The rarest ones were worth fortunes; the most cherished ones were often the simplest.'],
         curatorNote: 'Every stamp tells a story. You just have to know where to look.',
         materials: 'Paper, adhesive, perforated edges', origin: 'Universal', dimensions: 'Variable (2-5 cm)',
-        mediaUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Franklin_SC1_1847.jpg?width=800',
-        mediaType: 'image',
-        source: 'Wikimedia Commons — US 1847 Benjamin Franklin 5-cent stamp (Scott #1). Public domain.',
-        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Franklin_SC1_1847.jpg'
+        mediaUrl: 'https://upload.wikimedia.org/wikipedia/commons/e/ed/Georg-Olden-Emancipation_Proclamation-Stamp.jpg',
+        source: 'Wikimedia Commons — Emancipation Proclamation centennial stamp (1963). US Gov / CC0.',
+        sourceUrl: 'https://commons.wikimedia.org/wiki/File:Georg-Olden-Emancipation_Proclamation-Stamp.jpg'
       }
     ]
   }
 ];
 
-// RENDER GALLERIES
-const container = document.getElementById('galleryContainer');
-
-galleries.forEach((gallery, gi) => {
-  const room = document.createElement('section');
-  room.className = 'gallery-room reveal';
-  room.id = 'gallery-' + gi;
-  room.innerHTML = `
-    <div class="gallery-room-inner">
-      <span class="gallery-number">${gallery.num}</span>
-      <div class="gallery-info">
-        <p class="gallery-label">Gallery</p>
-        <h2 class="gallery-name">${gallery.name}</h2>
-        <p class="gallery-desc">${gallery.desc}</p>
-      </div>
-    </div>
-  `;
-  container.appendChild(room);
-
-  const grid = document.createElement('div');
-  grid.className = 'gallery-exhibits';
-
-  gallery.exhibits.forEach(exhibit => {
-    const card = document.createElement('article');
-    card.className = 'exhibit reveal';
-    card.dataset.id = exhibit.id;
-
-    const mediaTypeIcon = exhibit.mediaType === 'audio' ? 'Audio' : 'Image';
-
-    card.innerHTML = `
-      <div class="exhibit-visual">
-        <img src="${exhibit.mediaUrl}" alt="${exhibit.title}" loading="lazy">
-        <span class="media-badge">${mediaTypeIcon}</span>
-      </div>
-      <div class="exhibit-body">
-        <span class="exhibit-era">${exhibit.era}</span>
-        <h3 class="exhibit-title">${exhibit.title}</h3>
-        <p class="exhibit-desc">${exhibit.desc}</p>
-        <div class="exhibit-tags">
-          ${exhibit.tags.map(t => `<span class="exhibit-tag">${t}</span>`).join('')}
-        </div>
-      </div>
-    `;
-
-    card.addEventListener('click', () => openModal(exhibit));
-    grid.appendChild(card);
+// Flatten exhibits with gallery reference for modal
+const allExhibits = [];
+galleries.forEach((g, gi) => {
+  g.exhibits.forEach(e => {
+    allExhibits.push({ ...e, galleryIndex: gi });
   });
-
-  container.appendChild(grid);
 });
 
 // MODAL
 const overlay = document.getElementById('modalOverlay');
-const content = document.getElementById('modalContent');
-
 function openModal(exhibit) {
   document.getElementById('modalEra').innerHTML = exhibit.era;
   document.getElementById('modalTitle').textContent = exhibit.title;
@@ -1179,7 +519,7 @@ function openModal(exhibit) {
   document.getElementById('modalCurator').textContent = exhibit.curatorNote;
   document.getElementById('modalMediaImage').src = exhibit.mediaUrl;
   document.getElementById('modalMediaImage').alt = exhibit.title;
-  document.getElementById('modalSourceText').innerHTML = exhibit.source + ' <a href="' + exhibit.sourceUrl + '" target="_blank" rel="noopener">View on Commons &nearr;</a>';
+  document.getElementById('modalSourceText').innerHTML = exhibit.source + ' <a href="' + exhibit.sourceUrl + '" target="_blank" rel="noopener">View Source &nearr;</a>';
   document.getElementById('modalMeta').innerHTML = `
     <div><p class="modal-meta-label">Materials</p><p class="modal-meta-value">${exhibit.materials}</p></div>
     <div><p class="modal-meta-label">Origin</p><p class="modal-meta-value">${exhibit.origin}</p></div>
@@ -1188,179 +528,611 @@ function openModal(exhibit) {
   overlay.classList.add('active');
   document.body.style.overflow = 'hidden';
 }
-
 function closeModal() {
   overlay.classList.remove('active');
   document.body.style.overflow = '';
 }
-
 document.getElementById('modalClose').addEventListener('click', closeModal);
-overlay.addEventListener('click', (e) => {
-  if (e.target === overlay) closeModal();
-});
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') closeModal();
-});
-
-// LOBBY CARD CLICKS
-document.querySelectorAll('.lobby-card').forEach(card => {
-  card.addEventListener('click', function() {
-    const gi = parseInt(this.dataset.gallery);
-    const target = document.getElementById('gallery-' + gi);
-    if (target) target.scrollIntoView({ behavior: 'smooth' });
-  });
-});
-
-// GALLERY NAVIGATION (arrow keys + indicator buttons)
-const gallerySections = [];
-document.querySelectorAll('.gallery-room').forEach(el => gallerySections.push(el));
-const giIndicator = document.getElementById('galleryIndicator');
-const giCurrent = document.getElementById('giCurrent');
-const giPrev = document.getElementById('giPrev');
-const giNext = document.getElementById('giNext');
-
-function getCurrentGalleryIndex() {
-  let currentIdx = -1;
-  gallerySections.forEach((section, i) => {
-    const rect = section.getBoundingClientRect();
-    if (rect.top < window.innerHeight * 0.5 && rect.bottom > 0) {
-      currentIdx = i;
-    }
-  });
-  return currentIdx;
-}
-
-function scrollToGallery(idx) {
-  if (idx < 0 || idx >= gallerySections.length) return;
-  gallerySections[idx].scrollIntoView({ behavior: 'smooth' });
-  updateGalleryIndicator();
-}
-
-function updateGalleryIndicator() {
-  const idx = getCurrentGalleryIndex();
-  if (idx >= 0) {
-    giCurrent.textContent = galleries[idx].name;
-    giPrev.disabled = idx === 0;
-    giNext.disabled = idx === gallerySections.length - 1;
-    if (!giIndicator.classList.contains('visible')) {
-      giIndicator.classList.add('visible');
-    }
-  } else {
-    giCurrent.textContent = 'Lobby';
-    giPrev.disabled = true;
-    giNext.disabled = true;
-    if (window.scrollY < 200) {
-      giIndicator.classList.remove('visible');
-    }
-  }
-}
-
-giPrev.addEventListener('click', () => {
-  const idx = getCurrentGalleryIndex();
-  if (idx > 0) scrollToGallery(idx - 1);
-});
-
-giNext.addEventListener('click', () => {
-  const idx = getCurrentGalleryIndex();
-  if (idx >= 0 && idx < gallerySections.length - 1) scrollToGallery(idx + 1);
-});
-
-document.addEventListener('keydown', (e) => {
-  if (overlay.classList.contains('active')) return;
-  if (e.key === 'ArrowLeft') {
-    const idx = getCurrentGalleryIndex();
-    if (idx > 0) { e.preventDefault(); scrollToGallery(idx - 1); }
-  } else if (e.key === 'ArrowRight') {
-    const idx = getCurrentGalleryIndex();
-    if (idx >= 0 && idx < gallerySections.length - 1) { e.preventDefault(); scrollToGallery(idx + 1); }
-  }
-});
-
-// SCROLL PROGRESS + LABEL
-const thumb = document.getElementById('scrollThumb');
-const label = document.getElementById('scrollLabel');
-
-function updateScroll() {
-  const scrollY = window.scrollY;
-  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-  const progress = docHeight > 0 ? scrollY / docHeight : 0;
-  const maxTop = 160;
-  thumb.style.top = (progress * maxTop) + 'px';
-
-  let currentLabel = 'Lobby';
-  const lobbySection = document.getElementById('lobby');
-  if (lobbySection) {
-    const lobbyRect = lobbySection.getBoundingClientRect();
-    if (lobbyRect.top < window.innerHeight * 0.5 && lobbyRect.bottom > 0) {
-      currentLabel = 'Museum Directory';
-    }
-  }
-  gallerySections.forEach(section => {
-    const rect = section.getBoundingClientRect();
-    if (rect.top < window.innerHeight * 0.5) {
-      const name = section.querySelector('.gallery-name');
-      if (name) currentLabel = name.textContent;
-    }
-  });
-  if (scrollY + window.innerHeight >= document.documentElement.scrollHeight - 50) {
-    currentLabel = 'Archive';
-  }
-  label.textContent = currentLabel;
-  if (scrollY > 200) { label.classList.add('visible'); }
-  else { label.classList.remove('visible'); }
-
-  updateGalleryIndicator();
-}
-
-window.addEventListener('scroll', updateScroll);
-updateScroll();
+overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
 
 // SCROLL REVEAL
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-    }
-  });
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
 }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
-document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
 // SUBMIT FORM
 const form = document.getElementById('submitForm');
 const success = document.getElementById('submitSuccess');
-
 form.addEventListener('submit', (e) => {
   e.preventDefault();
   const name = document.getElementById('artName').value.trim();
   const story = document.getElementById('artStory').value.trim();
   if (!name || !story) return;
-
   const submission = {
-    name,
-    category: document.getElementById('artCategory').value,
-    era: document.getElementById('artEra').value,
-    story,
+    name, category: document.getElementById('artCategory').value,
+    era: document.getElementById('artEra').value, story,
     why: document.getElementById('artWhy').value,
     submitter: document.getElementById('subName').value || 'Anonymous',
     email: document.getElementById('subEmail').value,
     date: new Date().toISOString()
   };
-
   const existing = JSON.parse(localStorage.getItem('humanArchiveSubmissions') || '[]');
   existing.push(submission);
   localStorage.setItem('humanArchiveSubmissions', JSON.stringify(existing));
-
   form.reset();
   form.style.display = 'none';
   success.classList.add('visible');
   document.getElementById('fileLabel').textContent = 'Attach a photograph of the artifact';
 });
-
 document.getElementById('artImage').addEventListener('change', function(e) {
-  const file = e.target.files[0];
-  document.getElementById('fileLabel').textContent = file ? file.name : 'Attach a photograph of the artifact';
+  document.getElementById('fileLabel').textContent = e.target.files[0] ? e.target.files[0].name : 'Attach a photograph of the artifact';
 });
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+// --- Setup ---
+const canvas = document.getElementById('three-canvas');
+const sectionEl = document.getElementById('three-section');
+
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.5;
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x1a1817);
+scene.fog = new THREE.Fog(0x1a1817, 55, 90);
+
+const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 80);
+camera.position.set(0, 2.5, 0);
+camera.lookAt(0, 1.5, 5);
+
+// --- Lights ---
+const ambient = new THREE.HemisphereLight(0xffeedd, 0x222244, 1.0);
+scene.add(ambient);
+
+const mainLight = new THREE.DirectionalLight(0xffeebb, 2.0);
+mainLight.position.set(5, 12, 8);
+mainLight.castShadow = true;
+mainLight.shadow.mapSize.width = 1024;
+mainLight.shadow.mapSize.height = 1024;
+mainLight.shadow.camera.near = 0.5;
+mainLight.shadow.camera.far = 25;
+mainLight.shadow.camera.left = -15;
+mainLight.shadow.camera.right = 15;
+scene.add(mainLight);
+
+const fillLight = new THREE.DirectionalLight(0xccbbff, 0.6);
+fillLight.position.set(-5, 4, -10);
+scene.add(fillLight);
+
+// Accent spots (one per gallery section, warmer, brighter)
+const spotLights = [];
+for (let i = 0; i < 7; i++) {
+  const z = -i * 9 - 5;
+  const spot = new THREE.PointLight(0xffcc88, 0.5, 14);
+  spot.position.set(0, 4.5, z);
+  scene.add(spot);
+  spotLights.push(spot);
+}
+
+// --- Floor ---
+const floorGeo = new THREE.PlaneGeometry(80, 100);
+const floorMat = new THREE.MeshStandardMaterial({
+  color: 0x6a6058, roughness: 0.85, metalness: 0.05
+});
+const floor = new THREE.Mesh(floorGeo, floorMat);
+floor.rotation.x = -Math.PI / 2;
+floor.position.set(0, -0.01, -35);
+floor.receiveShadow = true;
+scene.add(floor);
+
+// Floor grid for depth perception
+const gridHelper = new THREE.GridHelper(80, 60, 0x8a7a6a, 0x8a7a6a);
+gridHelper.position.set(0, 0, -35);
+gridHelper.material.transparent = true;
+gridHelper.material.opacity = 0.12;
+scene.add(gridHelper);
+
+// --- Build Galleries ---
+const galleryObjects = []; // { galleryIndex, frameMeshes: [{ mesh, exhibit }] }
+const GALLEY_WIDTH = 7;
+const WALL_HEIGHT = 4.5;
+const SECTION_DEPTH = 9;
+const HALF = GALLEY_WIDTH / 2;
+
+const wallMat = new THREE.MeshStandardMaterial({
+  color: 0x5a5048, roughness: 0.7, metalness: 0.02, side: THREE.DoubleSide
+});
+const frameBgMat = new THREE.MeshStandardMaterial({
+  color: 0xf0e8dd, roughness: 0.4, metalness: 0.0
+});
+const textureLoader = new THREE.TextureLoader();
+
+galleries.forEach((gallery, gi) => {
+  const zCenter = -gi * SECTION_DEPTH - SECTION_DEPTH / 2;
+
+  // Gallery divider with doorway opening
+  const doorGap = 2.8;
+  const segW = (GALLEY_WIDTH - doorGap) / 2;
+  for (let s = -1; s <= 1; s += 2) {
+    const seg = new THREE.Mesh(
+      new THREE.BoxGeometry(segW, WALL_HEIGHT, 0.15),
+      new THREE.MeshStandardMaterial({ color: 0x3a3530, roughness: 0.8 })
+    );
+    seg.position.set(s * (doorGap / 2 + segW / 2), WALL_HEIGHT / 2, zCenter - SECTION_DEPTH / 2);
+    seg.castShadow = true;
+    scene.add(seg);
+  }
+  // Door header beam
+  const header = new THREE.Mesh(
+    new THREE.BoxGeometry(doorGap, 0.2, 0.25),
+    new THREE.MeshStandardMaterial({ color: 0x4a4440, roughness: 0.7 })
+  );
+  header.position.set(0, WALL_HEIGHT - 0.1, zCenter - SECTION_DEPTH / 2);
+  scene.add(header);
+
+  // Floor section (lighter warm wood tone)
+  const floorPatch = new THREE.Mesh(
+    new THREE.PlaneGeometry(GALLEY_WIDTH - 1, SECTION_DEPTH - 1),
+    new THREE.MeshStandardMaterial({ color: 0x5a5048, roughness: 0.9 })
+  );
+  floorPatch.rotation.x = -Math.PI / 2;
+  floorPatch.position.set(0, 0.01, zCenter);
+  scene.add(floorPatch);
+
+  // Left wall
+  const leftWall = new THREE.Mesh(
+    new THREE.BoxGeometry(0.15, WALL_HEIGHT, SECTION_DEPTH),
+    wallMat
+  );
+  leftWall.position.set(-HALF, WALL_HEIGHT / 2, zCenter);
+  leftWall.castShadow = true;
+  scene.add(leftWall);
+
+  // Right wall
+  const rightWall = new THREE.Mesh(
+    new THREE.BoxGeometry(0.15, WALL_HEIGHT, SECTION_DEPTH),
+    wallMat
+  );
+  rightWall.position.set(HALF, WALL_HEIGHT / 2, zCenter);
+  rightWall.castShadow = true;
+  scene.add(rightWall);
+
+  // Gallery plaques now mounted on divider walls (see below)
+
+  // --- Place exhibits on left and right walls ---
+  const frameObjects = [];
+  const exhibitsPerWall = Math.ceil(gallery.exhibits.length / 2);
+  const wallExhibits = [
+    gallery.exhibits.slice(0, exhibitsPerWall),
+    gallery.exhibits.slice(exhibitsPerWall)
+  ];
+
+  wallExhibits.forEach((exhibitGroup, wallIdx) => {
+    const xPos = wallIdx === 0 ? -HALF + 0.1 : HALF - 0.1;
+    const side = wallIdx === 0 ? 1 : -1;
+    const count = exhibitGroup.length;
+    if (count === 0) return;
+
+    exhibitGroup.forEach((exhibit, ei) => {
+      const spacing = SECTION_DEPTH / (count + 1);
+      const zPos = zCenter - SECTION_DEPTH / 2 + spacing * (ei + 1);
+      const yPos = 2.2;
+
+      // Backlight glow behind frame
+      const frameW = 2.8;
+      const frameH = 2.0;
+      const backlight = new THREE.Mesh(
+        new THREE.PlaneGeometry(frameW + 0.8, frameH + 0.8),
+        new THREE.MeshStandardMaterial({ color: 0xc4957a, emissive: 0x995533, emissiveIntensity: 0.5, transparent: true, opacity: 0.5, side: THREE.DoubleSide })
+      );
+      backlight.position.set(xPos, yPos, zPos);
+      backlight.lookAt(side * 10, yPos, zPos);
+      scene.add(backlight);
+
+      // Frame background (slightly larger)
+      const frame = new THREE.Mesh(
+        new THREE.PlaneGeometry(frameW + 0.2, frameH + 0.2),
+        new THREE.MeshStandardMaterial({ color: 0xd6cbbf, roughness: 0.3, metalness: 0.05, side: THREE.DoubleSide })
+      );
+      frame.position.set(xPos, yPos, zPos);
+      frame.lookAt(side * 10, yPos, zPos);
+      scene.add(frame);
+
+      // Image plane
+      const imgMat = new THREE.MeshStandardMaterial({
+        color: 0xffffff, roughness: 0.5, side: THREE.DoubleSide
+      });
+      const imgMesh = new THREE.Mesh(
+        new THREE.PlaneGeometry(frameW, frameH),
+        imgMat
+      );
+      imgMesh.position.set(xPos + side * 0.02, yPos, zPos);
+      imgMesh.lookAt(side * 10, yPos, zPos);
+      imgMesh.userData.isExhibit = true;
+      imgMesh.userData.exhibitIndex = allExhibits.indexOf(allExhibits.find(e => e.id === exhibit.id));
+      scene.add(imgMesh);
+
+      // Load texture
+      textureLoader.load(exhibit.mediaUrl, (tex) => {
+        tex.colorSpace = THREE.SRGBColorSpace;
+        imgMat.map = tex;
+        imgMat.needsUpdate = true;
+      }, undefined, () => {
+        imgMat.color.setHex(0x444444);
+      });
+
+      frameObjects.push({ mesh: imgMesh, exhibit });
+
+      // Small label below (title plaque)
+      const label = new THREE.Mesh(
+        new THREE.PlaneGeometry(2.4, 0.3),
+        new THREE.MeshStandardMaterial({ color: 0x3a3530, roughness: 0.7, side: THREE.DoubleSide })
+      );
+      label.position.set(xPos, yPos - frameH / 2 - 0.25, zPos);
+      label.lookAt(side * 10, yPos - frameH / 2 - 0.25, zPos);
+      scene.add(label);
+    });
+  });
+
+  galleryObjects.push({ galleryIndex: gi, frames: frameObjects });
+});
+
+// --- Wall-mounted gallery plaques (on divider walls next to each doorway) ---
+function makePlaqueTexture(text, subtext) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 512;
+  canvas.height = 160;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#2a2622';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.strokeStyle = '#6a5a4a';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(6, 6, canvas.width - 12, canvas.height - 12);
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#c4957a';
+  ctx.font = 'bold 28px "Playfair Display", Georgia, serif';
+  ctx.fillText(text, 256, 58);
+  ctx.fillStyle = 'rgba(255,255,255,0.35)';
+  ctx.font = '16px "Fragment Mono", monospace';
+  ctx.fillText(subtext, 256, 102);
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.needsUpdate = true;
+  return tex;
+}
+
+galleries.forEach((gallery, gi) => {
+  const zEdge = -gi * SECTION_DEPTH - SECTION_DEPTH;
+  const tex = makePlaqueTexture(gallery.name, 'Gallery ' + gallery.num);
+  // Plaque on the right wall segment facing into the gallery
+  const plaque = new THREE.Mesh(
+    new THREE.PlaneGeometry(1.6, 0.5),
+    new THREE.MeshStandardMaterial({ map: tex, roughness: 0.6, metalness: 0.05, side: THREE.DoubleSide })
+  );
+  plaque.position.set(0.3, 2.0, zEdge + 0.1);
+  plaque.lookAt(0, 2.0, zEdge + 2);
+  scene.add(plaque);
+});
+
+// --- Room divider columns between galleries ---
+for (let i = 1; i < 7; i++) {
+  const z = -i * SECTION_DEPTH;
+  for (let side = -1; side <= 1; side += 2) {
+    const col = new THREE.Mesh(
+      new THREE.BoxGeometry(0.3, WALL_HEIGHT, 0.3),
+      new THREE.MeshStandardMaterial({ color: 0x3a3530, roughness: 0.8 })
+    );
+    col.position.set(side * HALF, WALL_HEIGHT / 2, z);
+    scene.add(col);
+  }
+}
+
+// --- OrbitControls ---
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.minDistance = 1.5;
+controls.maxDistance = 7;
+controls.minPolarAngle = 0.15;
+controls.maxPolarAngle = Math.PI / 2.2;
+controls.target.set(0, 1.8, -SECTION_DEPTH / 2);
+controls.update();
+
+// --- Navigation ---
+let currentGallery = 0;
+let isTransitioning = false;
+let transDuration = 0.8;
+let transStart = 0;
+let transFromPos = new THREE.Vector3();
+let transToPos = new THREE.Vector3();
+let transFromTarget = new THREE.Vector3();
+let transToTarget = new THREE.Vector3();
+let transCallback = null;
+
+// --- Examine mode ---
+let examineMode = false;
+let examinedMesh = null;
+let examinedExhibit = null;
+let savedCamPos = new THREE.Vector3();
+let savedTarget = new THREE.Vector3();
+
+function easeInOutCubic(t) {
+  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+}
+
+function startTransition(toPos, toTarget, duration, callback) {
+  transFromPos.copy(camera.position);
+  transToPos.copy(toPos);
+  transFromTarget.copy(controls.target);
+  transToTarget.copy(toTarget);
+  transDuration = duration || 0.8;
+  transStart = performance.now();
+  isTransitioning = true;
+  controls.enabled = false;
+  transCallback = callback || null;
+}
+
+function getGalleryCenter(idx) {
+  const z = -idx * SECTION_DEPTH - SECTION_DEPTH / 2;
+  return new THREE.Vector3(0, 1.8, z);
+}
+
+function getGalleryCamPos(idx) {
+  const z = -idx * SECTION_DEPTH - SECTION_DEPTH / 2;
+  return new THREE.Vector3(0, 2.5, z + 2);
+}
+
+function goToGallery(idx) {
+  if (idx === currentGallery || isTransitioning) return;
+  if (idx < 0 || idx >= galleries.length) return;
+  if (examineMode) {
+    examineMode = false;
+    examinedMesh = null;
+    examinedExhibit = null;
+    controls.minDistance = 1.5;
+    controls.maxDistance = 7;
+    closeModal();
+  }
+  currentGallery = idx;
+  updateUI();
+  startTransition(getGalleryCamPos(idx), getGalleryCenter(idx), 0.8, () => {
+    controls.enabled = true;
+  });
+}
+
+function enterExamine(mesh, exhibit) {
+  if (isTransitioning) return;
+  savedCamPos.copy(camera.position);
+  savedTarget.copy(controls.target);
+  examineMode = true;
+  examinedMesh = mesh;
+  examinedExhibit = exhibit;
+  const pos = new THREE.Vector3();
+  mesh.getWorldPosition(pos);
+  const dir = new THREE.Vector3(0, 0, 1);
+  dir.applyQuaternion(mesh.quaternion);
+  const camPos = pos.clone().add(dir.clone().multiplyScalar(3.0));
+  camPos.y += 0.2;
+  controls.minDistance = 1.0;
+  controls.maxDistance = 5;
+  startTransition(camPos, pos, 0.6, () => {
+    controls.enabled = true;
+    openModal(exhibit);
+  });
+}
+
+function exitExamine() {
+  if (!examineMode) return;
+  examineMode = false;
+  examinedMesh = null;
+  examinedExhibit = null;
+  controls.minDistance = 1.5;
+  controls.maxDistance = 7;
+  closeModal();
+  startTransition(savedCamPos, savedTarget, 0.5, () => {
+    controls.enabled = true;
+  });
+}
+
+function updateUI() {
+  document.getElementById('galleryName').textContent = galleries[currentGallery].name;
+  document.getElementById('galleryCount').textContent = (currentGallery + 1) + ' / ' + galleries.length;
+  document.getElementById('navPrev').disabled = currentGallery === 0;
+  document.getElementById('navNext').disabled = currentGallery === galleries.length - 1;
+}
+
+// --- Raycaster ---
+const raycaster = new THREE.Raycaster();
+const pointer = new THREE.Vector2();
+let hoveredMesh = null;
+
+canvas.addEventListener('click', (event) => {
+  if (isTransitioning) return;
+  const rect = canvas.getBoundingClientRect();
+  pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+  pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+  raycaster.setFromCamera(pointer, camera);
+  const intersects = raycaster.intersectObjects(scene.children);
+  let hitExhibit = false;
+  for (const hit of intersects) {
+    if (hit.object.userData.isExhibit) {
+      hitExhibit = true;
+      if (isTransitioning) break;
+      const idx = hit.object.userData.exhibitIndex;
+      if (idx !== undefined && allExhibits[idx]) {
+        if (examineMode && hit.object === examinedMesh) {
+          if (!overlay.classList.contains('active')) openModal(allExhibits[idx]);
+        } else {
+          enterExamine(hit.object, allExhibits[idx]);
+        }
+      }
+      break;
+    }
+  }
+  if (!hitExhibit && examineMode) exitExamine();
+});
+
+// Hover effect (throttled to ~15fps)
+let hoverThrottle = 0;
+canvas.addEventListener('pointermove', (event) => {
+  const now = performance.now();
+  if (now - hoverThrottle < 66) return;
+  hoverThrottle = now;
+  const rect = canvas.getBoundingClientRect();
+  pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+  pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+  raycaster.setFromCamera(pointer, camera);
+  const intersects = raycaster.intersectObjects(scene.children);
+  let found = false;
+  for (const hit of intersects) {
+    if (hit.object.userData.isExhibit) {
+      canvas.style.cursor = 'pointer';
+      if (hoveredMesh && hoveredMesh !== hit.object) {
+        hoveredMesh.scale.set(1, 1, 1);
+      }
+      hit.object.scale.set(1.03, 1.03, 1);
+      hoveredMesh = hit.object;
+      found = true;
+      break;
+    }
+  }
+  if (!found) {
+    canvas.style.cursor = 'grab';
+    if (hoveredMesh) {
+      hoveredMesh.scale.set(1, 1, 1);
+      hoveredMesh = null;
+    }
+  }
+});
+
+// --- Controls ---
+document.getElementById('navPrev').addEventListener('click', () => goToGallery(currentGallery - 1));
+document.getElementById('navNext').addEventListener('click', () => goToGallery(currentGallery + 1));
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    if (overlay.classList.contains('active')) { closeModal(); return; }
+    if (examineMode) { exitExamine(); return; }
+  }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); goToGallery(currentGallery - 1); }
+  if (e.key === 'ArrowRight') { e.preventDefault(); goToGallery(currentGallery + 1); }
+});
+
+// --- Entry button ---
+const enterBtn = document.getElementById('three-enter-btn');
+const loaderEl = document.getElementById('three-loader');
+let texturesLoaded = 0;
+const totalTextures = allExhibits.length;
+
+textureLoader.manager.onProgress = (url, loaded, total) => {
+  texturesLoaded = loaded;
+  const pct = Math.round((loaded / total) * 100);
+  loaderEl.textContent = 'Loading Museum\u00a0\u00a0' + pct + '%';
+  if (loaded >= total) {
+    loaderEl.textContent = 'Loading Museum\u00a0\u00a0Done';
+    setTimeout(() => {
+      loaderEl.style.opacity = '0';
+      setTimeout(() => { loaderEl.style.display = 'none'; }, 400);
+      enterBtn.classList.add('visible');
+    }, 300);
+  }
+};
+
+// Fallback: show enter button after 5s even if not all textures loaded
+setTimeout(() => {
+  if (enterBtn.style.display !== 'none') {
+    loaderEl.style.opacity = '0';
+    setTimeout(() => {
+      loaderEl.style.display = 'none';
+      enterBtn.classList.add('visible');
+    }, 500);
+  }
+}, 5000);
+
+function enterMuseum() {
+  enterBtn.classList.remove('visible');
+  enterBtn.style.pointerEvents = 'none';
+  document.getElementById('three-hint').style.opacity = '0';
+  startTransition(
+    getGalleryCamPos(0),
+    getGalleryCenter(0),
+    2.0,
+    () => { controls.enabled = true; }
+  );
+}
+
+// On "Enter" click, start dolly-in
+canvas.addEventListener('click', () => {
+  if (enterBtn.classList.contains('visible')) enterMuseum();
+}, { once: true });
+
+// Also allow clicking the button itself
+enterBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  enterMuseum();
+});
+
+// --- Resize ---
+function resize() {
+  const w = sectionEl.clientWidth;
+  const h = sectionEl.clientHeight;
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+window.addEventListener('resize', resize);
+resize();
+
+// Auto-dolly when scrolled into view
+const enterObserver = new IntersectionObserver((entries) => {
+  for (const entry of entries) {
+    if (entry.isIntersecting && enterBtn.classList.contains('visible')) {
+      enterMuseum();
+      enterObserver.disconnect();
+    }
+  }
+}, { threshold: 0.3 });
+enterObserver.observe(sectionEl);
+
+// Initial camera (offset to see side exhibits, not staring at back wall)
+camera.position.set(-2.2, 2.5, -1.5);
+controls.target.set(0.5, 1.8, -5);
+controls.update();
+updateUI();
+// Show hint
+setTimeout(() => {
+  document.getElementById('three-hint').style.opacity = '1';
+}, 1000);
+
+// --- Render loop ---
+function animate(time) {
+  requestAnimationFrame(animate);
+
+  if (isTransitioning) {
+    const elapsed = (time - transStart) / 1000;
+    const t = Math.min(elapsed / transDuration, 1);
+    const e = easeInOutCubic(t);
+    camera.position.lerpVectors(transFromPos, transToPos, e);
+    controls.target.lerpVectors(transFromTarget, transToTarget, e);
+    controls.update();
+    if (t >= 1) {
+      isTransitioning = false;
+      if (transCallback) { transCallback(); transCallback = null; }
+    }
+  }
+
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
 </script>
 </body>
 </html>
