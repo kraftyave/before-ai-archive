@@ -974,39 +974,6 @@ canvas.addEventListener('pointermove', (event) => {
   if (!found) canvas.style.cursor = 'grab';
 });
 
-// Hover effect (throttled to ~15fps)
-let hoverThrottle = 0;
-canvas.addEventListener('pointermove', (event) => {
-  const now = performance.now();
-  if (now - hoverThrottle < 66) return;
-  hoverThrottle = now;
-  const rect = canvas.getBoundingClientRect();
-  pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-  pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-  raycaster.setFromCamera(pointer, camera);
-  const intersects = raycaster.intersectObjects(scene.children);
-  let found = false;
-  for (const hit of intersects) {
-    if (hit.object.userData.isExhibit) {
-      canvas.style.cursor = 'pointer';
-      if (hoveredMesh && hoveredMesh !== hit.object) {
-        hoveredMesh.scale.set(1, 1, 1);
-      }
-      hit.object.scale.set(1.03, 1.03, 1);
-      hoveredMesh = hit.object;
-      found = true;
-      break;
-    }
-  }
-  if (!found) {
-    canvas.style.cursor = 'grab';
-    if (hoveredMesh) {
-      hoveredMesh.scale.set(1, 1, 1);
-      hoveredMesh = null;
-    }
-  }
-});
-
 // --- Controls ---
 document.getElementById('navPrev').addEventListener('click', () => goToGallery(currentGallery - 1));
 document.getElementById('navNext').addEventListener('click', () => goToGallery(currentGallery + 1));
