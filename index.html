@@ -842,7 +842,7 @@ controls.dampingFactor = 0.08;
 controls.minDistance = 1.5;
 controls.maxDistance = 7;
 controls.minPolarAngle = 0.15;
-controls.maxPolarAngle = Math.PI / 2.2;
+controls.maxPolarAngle = Math.PI / 2.5;
 controls.target.set(0, 1.8, -SECTION_DEPTH / 2);
 controls.update();
 
@@ -952,32 +952,26 @@ function updateUI() {
 // --- Raycaster ---
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
-let hoveredMesh = null;
-
-canvas.addEventListener('click', (event) => {
-  if (isTransitioning) return;
+// Hover cursor (throttled to ~15fps)
+let hoverThrottle = 0;
+canvas.addEventListener('pointermove', (event) => {
+  const now = performance.now();
+  if (now - hoverThrottle < 66) return;
+  hoverThrottle = now;
   const rect = canvas.getBoundingClientRect();
   pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
   pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
   raycaster.setFromCamera(pointer, camera);
   const intersects = raycaster.intersectObjects(scene.children);
-  let hitExhibit = false;
+  let found = false;
   for (const hit of intersects) {
     if (hit.object.userData.isExhibit) {
-      hitExhibit = true;
-      if (isTransitioning) break;
-      const idx = hit.object.userData.exhibitIndex;
-      if (idx !== undefined && allExhibits[idx]) {
-        if (examineMode && hit.object === examinedMesh) {
-          if (!overlay.classList.contains('active')) openModal(allExhibits[idx]);
-        } else {
-          enterExamine(hit.object, allExhibits[idx]);
-        }
-      }
+      canvas.style.cursor = 'pointer';
+      found = true;
       break;
     }
   }
-  if (!hitExhibit && examineMode) exitExamine();
+  if (!found) canvas.style.cursor = 'grab';
 });
 
 // Hover effect (throttled to ~15fps)
